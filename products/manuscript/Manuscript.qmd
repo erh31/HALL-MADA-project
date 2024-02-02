@@ -1,7 +1,7 @@
 ---
-title: "Example Manuscript Template for a Data Analysis Project"
-subtitle: ""
-author: Andreas Handel
+title: "Temporal Trends in Popular Music Genres: A Data-Driven Analysis"
+subtitle: "Elizabeth Hall - Data Analysis Project"
+author: Elizabeth Hall
 date: "`r Sys.Date()`"
 format:
   docx:
@@ -24,7 +24,52 @@ library(here)
 library(knitr)
 ```
 
+# Part 1
+## The Data
+The data I have so far is a list of the Billboard Hot 100s from 1958 to 2023. (Which can be found here https://github.com/HipsterVizNinja/random-data/blob/main/Music/hot-100/README.md)
 
+The data can also be found in the "raw-data" folder in this GitHub repo. It is titled "Hot_100s.csv". 
+
+This dataset includes observations for chart position, chart date, song name, performer name, song id, instance, time on chart, consecutive weeks, previous week, peak position, worst position, chart debut date, and chart url. The data was collected from the Billboards Hot 100 
+
+I will be adding the genre category to this dataset myself by cross-referencing the artists with the Spotify API (found here - https://developer.spotify.com/documentation/web-api) to obtain their musical genre. Though I am not entirely sure how the data was collected, I know that the Billboard Hot 100s keeps weekly records on their website, so this is where the data came from. 
+
+Here is some code to display a little info on the data:
+```{r, echo=FALSE, message=FALSE}
+# Load required packages
+library(tidyverse)
+
+# Load and read file
+billboard_top_100s <- "Hot_100.csv"
+df <- read.csv(billboard_top_100s)
+
+#Load info on data
+head(df)
+cat("Data Summary:\n")
+str(df)
+
+cat("\nDescriptive Statistics:\n")
+summary(df)
+
+cat("\nFirst few rows of the Data Frame:\n")
+head(df)
+```
+
+I may also use other datasets to supplement or do further analysis but I do not have those currently. 
+
+## The Question
+The question I want to answer is: How has the popularity of different music genres evolved over time? 
+
+The primary outcome of interest is to see what if any temporal trends exist in the data.
+Ex: Was pop less popular in the 50-90s and more popular in the 2000s? Did rock become less popular after the 80s? 
+
+Some specific predictors I want to look at are time(years), genre, and artists. 
+I may also look into societal and cultural events, or outside factors that could influence music trends. This would not be 100% reliable, but it would be interesting to see if any events line up with trends in the data. The main relationships/patterns that I will be looking for in the data are patterns/trends in genre popularity over time. Though if I find more interesting datasets this may expand and change some. 
+
+## Analysis
+I will likely be analyzing time(years) vs genre vs popularity. 
+Popularity will be some measure based on time spent on chart, peak position, and consecutive weeks. I am not 100% sure how this system will work yet but that is the vague idea.
+Genre analysis, as mentioned earlier, will be done using the Spotify API (found here - https://developer.spotify.com/documentation/web-api) to obtain genre per artist. 
 
 # Summary/Abstract
 _Write a summary of your project._
