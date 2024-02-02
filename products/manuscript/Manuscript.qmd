@@ -10,13 +10,19 @@ format:
     highlight-style: github
 bibliography: ../assets/dataanalysis-references.bib
 csl: ../assets/apa.csl
+editor: 
+  markdown: 
+    wrap: sentence
 ---
 
-The structure below is one possible setup for a data analysis project (including the course project). For a manuscript, adjust as needed. 
+The structure below is one possible setup for a data analysis project (including the course project).
+For a manuscript, adjust as needed.
 You don't need to have exactly these sections, but the content covering those sections should be addressed.
 
-This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
-
+This uses MS Word as output format.
+[See here](https://quarto.org/docs/output-formats/ms-word.html) for more information.
+You can switch to other formats, like html or pdf.
+See [the Quarto documentation](https://quarto.org/) for other formats.
 
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages
@@ -25,16 +31,23 @@ library(knitr)
 ```
 
 # Part 1
+
 ## The Data
-The data I have so far is a list of the Billboard Hot 100s from 1958 to 2023. (Which can be found here https://github.com/HipsterVizNinja/random-data/blob/main/Music/hot-100/README.md)
 
-The data can also be found in the "raw-data" folder in this GitHub repo. It is titled "Hot_100s.csv". 
+The data I have so far is a list of the Billboard Hot 100s from 1958 to 2023.
+(Which can be found here <https://github.com/HipsterVizNinja/random-data/blob/main/Music/hot-100/README.md>)
 
-This dataset includes observations for chart position, chart date, song name, performer name, song id, instance, time on chart, consecutive weeks, previous week, peak position, worst position, chart debut date, and chart url. The data was collected from the Billboards Hot 100 
+The data can also be found in the "raw-data" folder in this GitHub repo.
+It is titled "Hot_100s.csv".
 
-I will be adding the genre category to this dataset myself by cross-referencing the artists with the Spotify API (found here - https://developer.spotify.com/documentation/web-api) to obtain their musical genre. Though I am not entirely sure how the data was collected, I know that the Billboard Hot 100s keeps weekly records on their website, so this is where the data came from. 
+This dataset includes observations for chart position, chart date, song name, performer name, song id, instance, time on chart, consecutive weeks, previous week, peak position, worst position, chart debut date, and chart url.
+The data was collected from the Billboards Hot 100
+
+I will be adding the genre category to this dataset myself by cross-referencing the artists with the Spotify API (found here -<https://developer.spotify.com/documentation/web-api>) to obtain their musical genre.
+Though I am not entirely sure how the data was collected, I know that the Billboard Hot 100s keeps weekly records on their website, so this is where the data came from.
 
 Here is some code to display a little info on the data:
+
 ```{r, echo=FALSE, message=FALSE}
 # Load required packages
 library(tidyverse)
@@ -55,57 +68,64 @@ cat("\nFirst few rows of the Data Frame:\n")
 head(df)
 ```
 
-I may also use other datasets to supplement or do further analysis but I do not have those currently. 
+I may also use other datasets to supplement or do further analysis but I do not have those currently.
 
 ## The Question
-The question I want to answer is: How has the popularity of different music genres evolved over time? 
+
+The question I want to answer is: How has the popularity of different music genres evolved over time?
 
 The primary outcome of interest is to see what if any temporal trends exist in the data.
-Ex: Was pop less popular in the 50-90s and more popular in the 2000s? Did rock become less popular after the 80s? 
+Ex: Was pop less popular in the 50-90s and more popular in the 2000s?
+Did rock become less popular after the 80s?
 
-Some specific predictors I want to look at are time(years), genre, and artists. 
-I may also look into societal and cultural events, or outside factors that could influence music trends. This would not be 100% reliable, but it would be interesting to see if any events line up with trends in the data. The main relationships/patterns that I will be looking for in the data are patterns/trends in genre popularity over time. Though if I find more interesting datasets this may expand and change some. 
+Some specific predictors I want to look at are time(years), genre, and artists.
+I may also look into societal and cultural events, or outside factors that could influence music trends.
+This would not be 100% reliable, but it would be interesting to see if any events line up with trends in the data.
+The main relationships/patterns that I will be looking for in the data are patterns/trends in genre popularity over time.
+Though if I find more interesting datasets this may expand and change some.
 
 ## Analysis
-I will likely be analyzing time(years) vs genre vs popularity. 
-Popularity will be some measure based on time spent on chart, peak position, and consecutive weeks. I am not 100% sure how this system will work yet but that is the vague idea.
-Genre analysis, as mentioned earlier, will be done using the Spotify API (found here - https://developer.spotify.com/documentation/web-api) to obtain genre per artist. 
+
+I will likely be analyzing time(years) vs genre vs popularity.
+Popularity will be some measure based on time spent on chart, peak position, and consecutive weeks.
+I am not 100% sure how this system will work yet but that is the vague idea.
+Genre analysis, as mentioned earlier, will be done using the Spotify API (found here - <https://developer.spotify.com/documentation/web-api>) to obtain genre per artist.
 
 # Summary/Abstract
-_Write a summary of your project._
 
+*Write a summary of your project.*
 
 {{< pagebreak >}}
 
-
-# Introduction 
+# Introduction
 
 ## General Background Information
-_Provide enough background on your topic that others can understand the why and how of your analysis_ 
+
+*Provide enough background on your topic that others can understand the why and how of your analysis*
 
 ## Description of data and data source
-_Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+
+*Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section.*
 
 ## Questions/Hypotheses to be addressed
-_State the research questions you plan to answer with this analysis._
 
-To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key. Then you can include like this:
+*State the research questions you plan to answer with this analysis.*
+
+To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key.
+Then you can include like this:
 
 Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
 
-
-
 {{< pagebreak >}}
 
+# Methods
 
-# Methods 
-
-_Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement._
-
+*Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement.*
 
 ## Schematic of workflow
 
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender.
+Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it).
+@fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender.
 We store those figures in the `assets` folder.
 
 ```{r}
@@ -115,34 +135,33 @@ We store those figures in the `assets` folder.
 knitr::include_graphics(here("products","assets","antigen-recognition.png"))
 ```
 
-
-
-
 ## Data aquisition
-_As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
 
+*As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next.*
 
 ## Data import and cleaning
-_Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
 
+*Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along.*
 
 ## Statistical analysis
-_Explain anything related to your statistical analyses._
 
+*Explain anything related to your statistical analyses.*
 
 {{< pagebreak >}}
-
 
 # Results
 
 ## Exploratory/Descriptive analysis
 
-_Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
-
+*Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project.*
 
 @tbl-summarytable shows a summary of the data.
 
-Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below.
+Note the loading of the data providing a **relative** path using the `../../` notation.
+(Two dots means a folder up).
+You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path.
+You can also use the `here` R package to create paths.
+See examples of that below.
 
 ```{r}
 #| label: tbl-summarytable
@@ -152,12 +171,9 @@ resulttable=readRDS("../../results/summarytable.rds")
 knitr::kable(resulttable)
 ```
 
-
-
 ## Basic statistical analysis
 
-_To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
-
+*To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p\<0.05 means statistical significance" interpretation is not valid.*
 
 @fig-result shows a scatterplot figure produced by one of the R scripts.
 
@@ -168,10 +184,9 @@ _To get some further insight into your data, if reasonable you could compute sim
 knitr::include_graphics(here("results","height-weight-stratified.png"))
 ```
 
-
 ## Full analysis
 
-_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
+*Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here.*
 
 Example @tbl-resulttable2 shows a summary of a linear model fit.
 
@@ -183,33 +198,33 @@ resulttable2 = readRDS(here("results","tables-files","resulttable2.rds"))
 knitr::kable(resulttable2)
 ```
 
-
 {{< pagebreak >}}
-
 
 # Discussion
 
 ## Summary and Interpretation
-_Summarize what you did, what you found and what it means._
+
+*Summarize what you did, what you found and what it means.*
 
 ## Strengths and Limitations
-_Discuss what you perceive as strengths and limitations of your analysis._
+
+*Discuss what you perceive as strengths and limitations of your analysis.*
 
 ## Conclusions
-_What are the main take-home messages?_
 
-_Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end_
+*What are the main take-home messages?*
 
-This paper [@leek2015] discusses types of analyses. 
+*Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end*
 
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
+This paper [@leek2015] discusses types of analyses.
 
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
+These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template.
 
+Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header.
+Many more style files for almost any journal [are available](https://www.zotero.org/styles).
+You also specify the location of your bibtex reference file in the YAML.
+You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
 
 {{< pagebreak >}}
 
 # References
-
-
-
