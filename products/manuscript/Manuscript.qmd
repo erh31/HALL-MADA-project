@@ -53,7 +53,7 @@ Here is some code to display a little info on the data:
 library(tidyverse)
 
 # Load and read file
-billboard_top_100s <- "Hot_100.csv"
+billboard_top_100s <- "/Users/lizahall/Desktop/School/Spring 2024/Applied Data Analysis/Project Repository/HALL-MADA-project/data/raw-data/Hot_100.csv"
 df <- read.csv(billboard_top_100s)
 
 #Load info on data
@@ -128,13 +128,6 @@ Sometimes you might want to show a schematic diagram/figure that was not created
 @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender.
 We store those figures in the `assets` folder.
 
-```{r}
-#| label: fig-schematic
-#| fig-cap: "A figure that is manually generated and shows some overview/schematic. This has nothing to do with the data, it's just a random one from one of our projects I found and placed here."
-#| echo: FALSE
-knitr::include_graphics(here("products","assets","antigen-recognition.png"))
-```
-
 ## Data aquisition
 
 *As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next.*
@@ -163,13 +156,6 @@ You never want to specify an **absolute** path like `C:\ahandel\myproject\result
 You can also use the `here` R package to create paths.
 See examples of that below.
 
-```{r}
-#| label: tbl-summarytable
-#| tbl-cap: "Data summary table."
-#| echo: FALSE
-resulttable=readRDS("../../results/summarytable.rds")
-knitr::kable(resulttable)
-```
 
 ## Basic statistical analysis
 
@@ -177,26 +163,12 @@ knitr::kable(resulttable)
 
 @fig-result shows a scatterplot figure produced by one of the R scripts.
 
-```{r}
-#| label: fig-result
-#| fig-cap: "Height and weight stratified by gender."
-#| echo: FALSE
-knitr::include_graphics(here("results","height-weight-stratified.png"))
-```
-
 ## Full analysis
 
 *Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here.*
 
 Example @tbl-resulttable2 shows a summary of a linear model fit.
 
-```{r}
-#| label: tbl-resulttable2
-#| tbl-cap: "Linear model fit table."
-#| echo: FALSE
-resulttable2 = readRDS(here("results","tables-files","resulttable2.rds"))
-knitr::kable(resulttable2)
-```
 
 {{< pagebreak >}}
 
