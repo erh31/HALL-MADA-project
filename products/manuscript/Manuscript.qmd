@@ -53,7 +53,8 @@ Here is some code to display a little info on the data:
 library(tidyverse)
 
 # Load and read file
-billboard_top_100s <- "/Users/lizahall/Desktop/School/Spring 2024/Applied Data Analysis/Project Repository/HALL-MADA-project/data/raw-data/Hot_100.csv"
+billboard_top_100s <-"../../data/raw-data/Hot_100.csv"
+
 df <- read.csv(billboard_top_100s)
 
 #Load info on data
