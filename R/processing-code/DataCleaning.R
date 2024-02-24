@@ -1,35 +1,15 @@
----
-title: "Cleaning and Condensing the Data"
-author: "Elizabeth Hall"
-output: html_document
----
+# CONDENSING DATASET
 
-# Processing Script
-
-This file contains the code for processing the Hot_100.csv dataset. It will also contain some inforamtion on how to use the SpotifyAPI.
-
-# Condensing and Cleaning the Dataset
-
-Load needed packages, and make sure they are installed.
-
-```{r}
+# loading necessecary libraries 
 library(tidyverse)
 library(dplyr)
 library(lubridate)
-```
 
-### Data loading
-
-```{r}
 # loading data, removing columns, and renaming variables
-data <- read.csv("../../data/raw-data/Hot_100.csv") %>%
+data <- read.csv("./data/raw-data/Hot_100.csv") %>%
   select(-chart_debut, -chart_url, -song_id)
 data <- data %>% rename(artist = performer)
-```
 
-Converting dates to be more workable, and organizing by week, month, and year.
-
-```{r}
 # Convert chart_date to Date type (if not already done)
 data$chart_date <- as.Date(data$chart_date)
 
@@ -39,15 +19,7 @@ data$month <- month(data$chart_date)
 
 # Using week of the year, adjust accordingly if you prefer week of the month
 data$week <- week(data$chart_date)
-```
 
-Establishing a ranking system, so as only to include the top songs and reduce dataset size.
-
-Songs are ranked by position on the charts, with time spent on the chart as a secondary ranking factor.
-
-Duplicates are removed, for easier processing when using the API later.
-
-```{r}
 # Define a ranking mechanism and filter to the top song per week, per month, per year
 top_songs_per_week_month_year <- data %>%
   group_by(year, month, week) %>%
@@ -59,55 +31,24 @@ top_songs_per_week_month_year <- data %>%
 unique_songs <- top_songs_per_week_month_year %>%
   distinct(song, .keep_all = TRUE)
 
-```
 
-### Using the API
 
-This process involves making a developer account in order to use the SpotifyAPI. It also involves the package spotifyr, which streamlines the process.
+# GETTING SONG ID'S
 
-Here are some helpful resources to reference when working with the API:
-
-[Getting Started with Spotify WebAPI](https://developer.spotify.com/documentation/web-api/tutorials/getting-started)
-
-[R Wrapper for the 'Spotify' Web API](https://www.rcharlie.com/spotifyr/)
-
-Loading the required libraries.
-
-The progress bar will be important in monitoring the progress of the API.
-
-```{r}
 # loading required libraries
 library(spotifyr)
 library(progress)
-```
 
-Here we have to input our SpotifyAPI credentials.
-
-These will be your own, and are acquired through your developer app. For more info on this process, reference the resources listed above.
-
-```{r}
 # setting Spotify API credentials
 Sys.setenv(SPOTIFY_CLIENT_ID = "57747ecd81a847ca8f24909dc0b9583c")
 Sys.setenv(SPOTIFY_CLIENT_SECRET = "4d32166a2afc4e50996a187f80b2382e")
 access_token <- get_spotify_access_token()
-```
 
-Here we are going to get the Spotify song ids. These will be helpful for conducting further analysis, and gathering more data from the API if desired at a later time.
-
-First we are just adding a column for `spotify_song_id` to the dataset.
-
-```{r}
 # Add a column for spotify_id if not exists
 if (!"spotify_song_id" %in% colnames(unique_songs)) {
   unique_songs$spotify_song_id <- NA
 }
-```
 
-Here is the function to fetch the song ids from the API.
-
-Note there is a delay built into this function, that is important. Without it you may get kicked off the API for sending too many requests.
-
-```{r}
 fetch_spotify_song_ids <- function(df) {
   # Ensure access token is refreshed
   access_token <- get_spotify_access_token()
@@ -149,17 +90,15 @@ fetch_spotify_song_ids <- function(df) {
   return(df)
 }
 
-```
 
-Then we run the function, and wait for it to complete.
-
-```{r}
 unique_songs_processed <- fetch_spotify_song_ids(unique_songs)
-```
 
-We then repeat the process above, but this time fetching artist ids instead of song ids.
 
-```{r}
+# GETTING ARTIST ID'S
+
+# this has to be done separately, as the SpotifyAPI does not allow for two search types at the same time
+# e.g. 'track' and 'artist' 
+
 # Add a column for spotify_id if not exists
 if (!"spotify_artist_id" %in% colnames(unique_songs_processed)) {
   unique_songs_processed$spotify_artist_id <- NA
@@ -207,11 +146,9 @@ fetch_spotify_artist_ids <- function(df) {
 
 unique_songs_processed <- fetch_spotify_artist_ids(unique_songs_processed)
 
-```
 
-Now, we are going to fetch the genres. This process is a bit different, as it is being called based on the artist id. Since we already have that we can go ahead and run the function to fetch the genres.
+# GETTING GENRES
 
-```{r}
 # Before the loop, ensure the dataframe has a genres column
 if (!"genres" %in% colnames(unique_songs_processed)) {
   unique_songs_processed$genres <- NA
@@ -256,17 +193,12 @@ fetch_genres <- function(df) {
 
 unique_songs_processed <- fetch_genres(unique_songs_processed)
 
-```
 
-Now the genre need to be simplified.
+# SIMPLIFYING GENRES
 
-This took quite a bit of time, but was worth it.
+# in order to make things a little simpler for later
+# im adding an extra column with the "main genre" 
 
-To start, we print the list of all unique genre categories.
-
-This way, we know what we're working with.
-
-```{r}
 # Function to extract variables from a column
 extract_variables <- function(column) {
   all_variables <- unlist(strsplit(column, ", "))
@@ -287,15 +219,15 @@ unique_variables <- remove_duplicates(all_variables)
 
 # Print unique genre variables with double quotes around each element
 cat(paste(sprintf('"%s"', unique_variables), collapse = ", "))
-```
 
-First step was to make a variable with all the genres.
+# i then used chat gpt to help me sort all of these genres into main genres
+# i then tweaked what ChatGPT gave me and used those catgories to simplify the genres
 
-Not pretty, but it got the job done and was straightfoward.
+# SIMPLIFYING GENRES INTO MAIN GENRES
 
-```{r}
 # The printed list of genres
 # This is not the prettiest way to do this, but it gets the job done
+# "italian|arkansas|new orleans|memphis|louisiana|
 
 genres <- c("adult standards", "doo-wop", "rock-and-roll", "rockabilly", "classic italian pop", "italian adult pop", 
             "deep adult standards", "rhythm and blues", "arkansas country", "classic country pop", "country", "country rock", 
@@ -330,11 +262,6 @@ genres <- c("adult standards", "doo-wop", "rock-and-roll", "rockabilly", "classi
             "canadian contemporary r&b", "singer-songwriter pop", "denpa-kei", "rhythm game", "trap soul", "slap house", "etherpop", 
             "indie poptimism", "melodic rap", "lgbtq+ hip hop", "dfw rap", "indie electropop", "gauze pop", "pov: indie", "shiver pop")
 
-```
-
-Next lists were created. This is so that they can be used for mapping, which will be used to sort the main dataset later.
-
-```{r}
 # Initialize empty lists for each main genre category
 pop_genres <- list()
 rock_genres <- list()
@@ -348,16 +275,8 @@ world_regional_genres <- list()
 indie_alt_genres <- list()
 classic_folk_genres <- list()
 other_genres <- list()
-no_genre <- list()  
-```
+no_genre <- list() 
 
-Then, the first round of sorting checks `genres` for certain phrases.
-
-Ex: if a genre contains "pop" it is sorted into the pop_genres list.
-
-The world_regional_genres was a little more complicated. I utilized ChatGPT to help me pick out all the nationalities/cities that were mentioned, so that those could also be identified in this first round of sorting which will save time in the next steps.
-
-```{r}
 # Sort genres into lists
 # Allows subgenres to fall into multiple main genre categories
 for (genre in genres) {
@@ -376,15 +295,9 @@ for (genre in genres) {
   # provided ChatGPT with the list of genres and had it help me pick out the cities/nationalities
   if (grepl("\\b(italian|new mexico|arkansas|louisiana|memphis|new orleans|belgian|british|scottish|chicano|detroit|south african|american|canadian|swedish|australian|hollywood|irish|uk|barbadian|st louis|queens|atlanta|atl|miami|russian|seattle|nz|dfw)\\b", genre)) world_regional_genres <- c(world_regional_genres, genre)
 }
-```
 
-Next, the stragglers needed to be sorted.
+# Sorting the stragglers
 
-To do this, all the lists were combined and then checked via the find_missing_genres function.
-
-Any genre from `genres` that was not present in the combined list were added to a vector called missing_genres. The missing_genres vector was then printed for easier manipulation.
-
-```{r}
 # Define genre_mapping based on the populated lists
 genre_mapping <- list(
   pop = pop_genres,
@@ -427,20 +340,13 @@ missing_genres <- find_missing_genres(genres, all_categorized_genres)
 # Print the list of missing genres
 cat(paste(missing_genres, collapse = ", "))
 
-```
 
-This next part took quite a bit of time and manual work.
-
-All of the sorting for the stragglers was done manually. I referenced online sources and put each genre into the main genre categories that most sources agreed they belonged to. Some belonged to multiple, and in this case were added to both main genre categories.
-
-I then re-checked for missing genres, to ensure that everything had been sorted.
-
-```{r}
 # The sorting of the remaining genres was done manually, now that the list had
 # been narrowed down to only those whose parent genre was not apparent
 
 # I googled each of the remaining genres, and sorted them into the main genre(s) to
 # which most sources seemed to agree that they belong
+# INCLUDE A LIST MAYBE???
 
 # Manually adding straggler to their genre lists
 genre_mapping$pop <- c(genre_mapping$pop, "lounge",  "beach music", "disco", "permanent wave",  "boy band",  "post-disco",  "paisley underground", "girl group",  "madchester")
@@ -463,13 +369,8 @@ missing_genres <- find_missing_genres(genres, all_categorized_genres)
 cat(paste(missing_genres, collapse = ", "))
 
 
-```
+# MAPPING GENRES TO THE DATASET
 
-The next step was mapping these genres to the dataset.
-
-Using the genre_mapping vector from before, the map_subgenres_to_main function below was used to map the main genres to the existing dataset.
-
-```{r}
 # Function to map subgenres to main genres and append them to a new column
 map_subgenres_to_main <- function(df, genre_mapping) {
   # Create a new column 'main_genres' initialized with empty strings
@@ -501,17 +402,13 @@ map_subgenres_to_main <- function(df, genre_mapping) {
 
 # Apply the function to your dataframe
 unique_songs_mapped <- map_subgenres_to_main(unique_songs_processed, genre_mapping)
-```
 
-Next the dataset containing only unique song instances was merged with the dataset that contains all instances. This is easier than trying to use the API on all instances, as the unique instances dataset is much smaller.
+# COMBINE DATASETS
 
-So using a left merge, the values from the unique instances dataset was merged with the all instances dataset.
-
-```{r}
 #Creating dataset, but not removing duplicates
 
 # loading data, removing columns, and renaming variables
-hot100_processed <- read.csv("../../data/raw-data/Hot_100.csv") %>%
+hot100_processed <- read.csv("./data/raw-data/Hot_100.csv") %>%
   select(-chart_debut, -chart_url, -song_id)
 hot100_processed <- hot100_processed %>% rename(artist = performer)
 
@@ -534,13 +431,7 @@ hot100_processed <- hot100_processed %>%
 # Merging datasets
 hot100_processed <- left_join(hot100_processed, unique_songs_mapped, by = c("artist", "song"))
 
-```
-
-# Saving the Data
-
-Finally, the data is saved as a csv to the processed-data folder.
-
-```{r}
 # Print to csv
-write.csv(hot100_processed, "../../data/processed-data/Hot_100.csv", row.names=FALSE)
-```
+write.csv(hot100_processed, "./data/processed-data/Hot_100.csv", row.names=FALSE)
+
+

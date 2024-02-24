@@ -1,42 +1,18 @@
----
-title: "Exploring the Data"
-author: "Elizabeth Hall"
-output: html_document
----
+# EXPLORING THE DATA A LITTLE BIT
 
-# Exploring the Data
-
-This file contains the code for some simple exploration of the cleaned data.
-
-# Summary Stats and Graphs
-
-Load needed packages, and make sure they are installed.
-
-```{r}
 # loading necessary libraries
+
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
-```
 
-### Data loading
-
-```{r}
 # Load data
-hot100_processed <- read.csv("../../data/processed-data/Hot_100.csv")
-```
+data <- read.csv("./data/processed-data/Hot_100.csv")
 
-Summary statistics for dataset.
-
-```{r}
 # Summary statistics
 summary_stats <- summary(hot100_processed)
 print(summary_stats)
-```
 
-Bar graph showing the total instances of each main genre.
-
-```{r}
 # Bar graph showing the total instances of each main genre
 genre_counts <- table(unlist(strsplit(hot100_processed$main_genres, ", ")))
 genre_counts <- sort(genre_counts, decreasing = TRUE) # Sort by count in descending order
@@ -52,11 +28,7 @@ ggplot(genre_counts_df, aes(x = reorder(genre, -count), y = count)) +
        x = "Main Genre",
        y = "Total Instances") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
-```
 
-Stacked area chart showing the percentage of main genres over time.
-
-```{r, warning=FALSE}
 # Prepare the data: Calculate the percentage of instances per year for each main genre
 hot100_percentage <- hot100_processed %>%
   separate_rows(main_genres, sep = ",") %>%
@@ -86,4 +58,7 @@ ggplot(hot100_percentage, aes(x = year.x)) +
        y = "Percentage",
        fill = "Genre")
 
-```
+
+
+
+

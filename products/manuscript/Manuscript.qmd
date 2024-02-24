@@ -15,15 +15,6 @@ editor:
     wrap: sentence
 ---
 
-The structure below is one possible setup for a data analysis project (including the course project).
-For a manuscript, adjust as needed.
-You don't need to have exactly these sections, but the content covering those sections should be addressed.
-
-This uses MS Word as output format.
-[See here](https://quarto.org/docs/output-formats/ms-word.html) for more information.
-You can switch to other formats, like html or pdf.
-See [the Quarto documentation](https://quarto.org/) for other formats.
-
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages
 library(here)
@@ -92,112 +83,47 @@ Popularity will be some measure based on time spent on chart, peak position, and
 I am not 100% sure how this system will work yet but that is the vague idea.
 Genre analysis, as mentioned earlier, will be done using the Spotify API (found here - <https://developer.spotify.com/documentation/web-api>) to obtain genre per artist.
 
-# Summary/Abstract
-
-*Write a summary of your project.*
-
 {{< pagebreak >}}
 
-# Introduction
+# Part 2
 
-## General Background Information
+## Data Cleaning and EDA
 
-*Provide enough background on your topic that others can understand the why and how of your analysis*
+The original dataset was already quite clean, however, more processing was done in order to condense the dataset to make it more managable.
+This was especially important when utilizing the Spotify Web API, as a large dataset can create issues.
 
-## Description of data and data source
+The dataset was split into week, month, and year, and then ranked using peak position as the primary factor and time spent on chart as the secondary factor.
 
-*Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section.*
+After that, the set was condensed even more to only contain unique entries, this was for the purposes of making things easier when using the API.
 
-## Questions/Hypotheses to be addressed
+The bulk of the processing came from using the Spotify Web API to fetch song id, artist id, and genres for each unique entry.
+Then genres were sorted and simplified into main genres, which will help gain an overall picture of genre trends over time.
 
-*State the research questions you plan to answer with this analysis.*
+## Exploratory Data Analysis
 
-To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key.
-Then you can include like this:
+The exploratory part included a stats summary and then two figures.
+The two figures focused mostly on genre as that is my main focus for this project.
+Here is the stats summary and the two figures:
 
-Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
+Stats Summary for Hot 100s processed data:
 
-{{< pagebreak >}}
+```{r, echo=FALSE, message=FALSE}
+# Load data
+hot100_processed <- read.csv("../../data/processed-data/Hot_100.csv")
 
-# Methods
+# Summary statistics
+summary_stats <- summary(hot100_processed)
+print(summary_stats)
 
-*Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement.*
+```
 
-## Schematic of workflow
+Total Instances of Each Main Genre:
 
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it).
-@fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender.
-We store those figures in the `assets` folder.
+![](images/total_instances_main_genres.png)
 
-## Data aquisition
+Percentage of Main Genres Over Time:
 
-*As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next.*
+![](images/perc_main_genres_over_time.png)
 
-## Data import and cleaning
-
-*Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along.*
-
-## Statistical analysis
-
-*Explain anything related to your statistical analyses.*
-
-{{< pagebreak >}}
-
-# Results
-
-## Exploratory/Descriptive analysis
-
-*Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project.*
-
-@tbl-summarytable shows a summary of the data.
-
-Note the loading of the data providing a **relative** path using the `../../` notation.
-(Two dots means a folder up).
-You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path.
-You can also use the `here` R package to create paths.
-See examples of that below.
-
-
-## Basic statistical analysis
-
-*To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p\<0.05 means statistical significance" interpretation is not valid.*
-
-@fig-result shows a scatterplot figure produced by one of the R scripts.
-
-## Full analysis
-
-*Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here.*
-
-Example @tbl-resulttable2 shows a summary of a linear model fit.
-
-
-{{< pagebreak >}}
-
-# Discussion
-
-## Summary and Interpretation
-
-*Summarize what you did, what you found and what it means.*
-
-## Strengths and Limitations
-
-*Discuss what you perceive as strengths and limitations of your analysis.*
-
-## Conclusions
-
-*What are the main take-home messages?*
-
-*Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end*
-
-This paper [@leek2015] discusses types of analyses.
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template.
-
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header.
-Many more style files for almost any journal [are available](https://www.zotero.org/styles).
-You also specify the location of your bibtex reference file in the YAML.
-You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
-
-{{< pagebreak >}}
-
-# References
+This particular graph is the kind of analysis I am interested in as it shows the progression of genre popularity over time.
+This is something I will explore further during the analysis portion.

@@ -1,10 +1,19 @@
-This folder contains a simple made-up data-set in an Excel file.
+This folder contains the Hot_100.csv file which contains data for the billboard hot 100s from the 1950s to 2023.
 
-It contains the variables `Height`, `Weight` and `Gender` of a few imaginary individuals.
+It contains the following variables:
+`chart_position`
+`chart_date`
+`song`
+`performer` 
+`song_id` 
+`instance`
+`time_on_chart`
+`consecutive_weeks` 
+`previous_week` 
+`peak_position` 
+`worst_position` 
+`chart_debut`
+ `chart_url`
 
-The dataset purposefully contains some faulty entries that need to be cleaned.
 
-Generally, any dataset should contain some meta-data explaining what each variable in the dataset is. (This is often called a **Codebook**.) For this simple example, the codebook is given as a second sheet in the Excel file.
-
-This raw data-set should generally not be edited by hand. It should instead be loaded and processed/cleaned using code.
 
