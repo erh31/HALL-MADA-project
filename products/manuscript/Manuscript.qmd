@@ -109,7 +109,7 @@ Stats Summary for Hot 100s processed data:
 
 ```{r, echo=FALSE, message=FALSE}
 # Load data
-hot100_processed <- read.csv("../../data/processed-data/Hot_100.csv")
+hot100_processed <- read.csv("../../data/processed-data/Hot_100_Processed.csv")
 
 # Summary statistics
 summary_stats <- summary(hot100_processed)
@@ -127,3 +127,13 @@ Percentage of Main Genres Over Time:
 
 This particular graph is the kind of analysis I am interested in as it shows the progression of genre popularity over time.
 This is something I will explore further during the analysis portion.
+
+## Starter Data Analysis
+
+I expanded on the idea of the Percentage of Main Genres Over Time graph seen above by splitting each genre into their own graph for better visibility.
+
+Total Counts of Main Genres Over Time - Separated:
+
+![](images/genreovertimeplot.png)
+
+This graph more clearly shows the trends of each genre over time.

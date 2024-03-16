@@ -1,0 +1,1 @@
+The Intermediates folder contains processed data various stages of processing.

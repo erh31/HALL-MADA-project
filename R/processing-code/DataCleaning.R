@@ -194,6 +194,49 @@ fetch_genres <- function(df) {
 unique_songs_processed <- fetch_genres(unique_songs_processed)
 
 
+# GETTING AUDIO FEATURE INFO
+
+# Function to fetch audio features for each song
+fetch_audio_features <- function(df) {
+  # Ensure access token is refreshed
+  access_token <- get_spotify_access_token()
+  
+  # Check if audio feature columns exist, if not add them
+  audio_features <- c("danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo")
+  for (feature in audio_features) {
+    if (!(feature %in% colnames(df))) {
+      df[[feature]] <- NA
+    }
+  }
+  
+  # Initialize progress bar
+  pb <- progress_bar$new(total = nrow(df), format = "[:bar] :percent ETA: :eta")
+  
+  # Iterate through the dataset
+  for (i in 1:nrow(df)) {
+    track_id <- df$spotify_song_id[i]
+    
+    # Fetch audio features for the track
+    if (!is.na(track_id)) {
+      audio_feature <- get_track_audio_features(track_id, access_token)
+      
+      # Store each audio feature in the dataframe
+      for (feature in audio_features) {
+        df[[feature]][i] <- audio_feature[[feature]]
+      }
+    }
+    
+    # Update progress bar
+    pb$tick()
+  }
+  
+  return(df)
+}
+
+
+# Fetch audio features for the unique songs
+unique_songs_processed <- fetch_audio_features(unique_songs_processed)
+
 # SIMPLIFYING GENRES
 
 # in order to make things a little simpler for later
@@ -405,33 +448,83 @@ unique_songs_mapped <- map_subgenres_to_main(unique_songs_processed, genre_mappi
 
 # COMBINE DATASETS
 
+# Loading required libraries
+library(dplyr)
+
 #Creating dataset, but not removing duplicates
 
-# loading data, removing columns, and renaming variables
+# Load the datasets
 hot100_processed <- read.csv("./data/raw-data/Hot_100.csv") %>%
-  select(-chart_debut, -chart_url, -song_id)
-hot100_processed <- hot100_processed %>% rename(artist = performer)
+  select(-chart_debut, -chart_url, -song_id) %>%
+  rename(artist = performer)
 
 # Convert chart_date to Date type (if not already done)
 hot100_processed$chart_date <- as.Date(hot100_processed$chart_date)
 
 # Add year, month, and week columns for grouping
-hot100_processed$year <- year(hot100_processed$chart_date)
-hot100_processed$month <- month(hot100_processed$chart_date)
-# Using week of the year, adjust accordingly if you prefer week of the month
-hot100_processed$week <- week(hot100_processed$chart_date)
-
-# Define a ranking mechanism and filter to the top song per week, per month, per year
 hot100_processed <- hot100_processed %>%
+  mutate(
+    year = year(chart_date),
+    month = month(chart_date),
+    week = week(chart_date)
+  )
+
+# Find the top song per week, per month, per year
+top_songs_per_week_month_year <- hot100_processed %>%
   group_by(year, month, week) %>%
   arrange(year, month, week, peak_position, desc(time_on_chart)) %>%
   slice(1) %>%
   ungroup()
 
-# Merging datasets
-hot100_processed <- left_join(hot100_processed, unique_songs_mapped, by = c("artist", "song"))
+# Initialize additional columns with NA
+top_songs_per_week_month_year <- top_songs_per_week_month_year %>%
+  mutate(
+    main_genres = NA,
+    spotify_song_id = NA,
+    spotify_artist_id = NA,
+    genres = NA,
+    danceability = NA,
+    energy = NA,
+    key = NA,
+    loudness = NA,
+    mode = NA,
+    speechiness = NA,
+    acousticness = NA,
+    instrumentalness = NA,
+    liveness = NA,
+    valence = NA,
+    tempo = NA
+  )
+
+# Perform a left join to match the columns by artist and year
+hot100_processed_updated <- left_join(top_songs_per_week_month_year, unique_songs_mapped %>% select(song, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, artist, year, main_genres, spotify_song_id, spotify_artist_id, genres), by = c("artist", "song"), suffix = c("", "_new"))
+
+# For each column that we wanted to replace, we'll update it from the new columns
+hot100_processed_updated <- hot100_processed_updated %>%
+  mutate(
+    main_genres = coalesce(main_genres_new, main_genres),
+    spotify_song_id = coalesce(spotify_song_id_new, spotify_song_id),
+    spotify_artist_id = coalesce(spotify_artist_id_new, spotify_artist_id),
+    danceability = coalesce(danceability_new, danceability),
+    genres = coalesce(genres_new, genres),
+    energy = coalesce(energy_new, energy),
+    key = coalesce(key_new, key),
+    loudness = coalesce(loudness_new, loudness),
+    mode = coalesce(mode_new, mode),
+    speechiness = coalesce(speechiness_new, speechiness),
+    acousticness = coalesce(acousticness_new, acousticness),
+    instrumentalness = coalesce(instrumentalness_new, instrumentalness),
+    liveness = coalesce(liveness_new, liveness),
+    valence = coalesce(valence_new, valence),
+    tempo = coalesce(tempo_new, tempo)
+  ) %>%
+  select(-ends_with("_new"))  # Remove the new columns after replacing the original ones
 
 # Print to csv
-write.csv(hot100_processed, "./data/processed-data/Hot_100.csv", row.names=FALSE)
+write.csv(hot100_processed_updated, "./data/processed-data/Hot_100_Processed.csv", row.names=FALSE)
+
+write.csv(unique_songs_processed, "./data/processed-data/unique_songs_processed.csv", row.names=FALSE)
+
+write.csv(unique_songs_mapped, "./data/processed-data/unique_songs_mapped.csv", row.names=FALSE)
 
 
