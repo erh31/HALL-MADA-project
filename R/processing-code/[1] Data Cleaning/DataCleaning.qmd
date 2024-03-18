@@ -6,13 +6,14 @@ output: html_document
 
 # Processing Script
 
-This file contains the code for processing the Hot_100.csv dataset. It will also contain some inforamtion on how to use the SpotifyAPI.
+This file contains the code for processing the Hot_100.csv dataset. It will also contain some information on how to use the SpotifyAPI.
 
 # Condensing and Cleaning the Dataset
 
 Load needed packages, and make sure they are installed.
 
 ```{r}
+library(here)
 library(tidyverse)
 library(dplyr)
 library(lubridate)
@@ -22,7 +23,7 @@ library(lubridate)
 
 ```{r}
 # loading data, removing columns, and renaming variables
-data <- read.csv("../../data/raw-data/Hot_100.csv") %>%
+data <- read.csv(here("data", "raw-data", "Hot_100.csv")) %>%
   select(-chart_debut, -chart_url, -song_id)
 data <- data %>% rename(artist = performer)
 ```
@@ -553,7 +554,7 @@ Next the dataset containing only unique song instances was merged with the datas
 #Creating dataset, but not removing duplicates
 
 # Load the datasets
-hot100_processed <- read.csv("../../data/raw-data/Hot_100.csv") %>%
+hot100_processed <- read.csv(here("data", "raw-data","Hot_100.csv")) %>%
   select(-chart_debut, -chart_url, -song_id) %>%
   rename(artist = performer)
 
@@ -627,9 +628,9 @@ Finally, the data is saved as a csv to the processed-data folder. Saving at vari
 
 ```{r}
 # Print to csv
-write.csv(hot100_processed_updated, "../../data/processed-data/Hot_100_Processed.csv", row.names=FALSE)
+write.csv(hot100_processed_updated, here("data", "processed-data", "Hot_100_Processed.csv"), row.names = FALSE)
 
-write.csv(unique_songs_processed, "../../data/processed-data/unique_songs_processed.csv", row.names=FALSE)
+write.csv(hot100_processed_updated, here("data", "processed-data", "unique_songs_processed.csv"), row.names = FALSE)
 
-write.csv(unique_songs_mapped, "../../data/processed-data/unique_songs_mapped.csv", row.names=FALSE)
+write.csv(unique_songs_mapped, here("data", "processed-data", "unique_songs_mapped.csv"), row.names=FALSE)
 ```

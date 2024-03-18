@@ -23,15 +23,13 @@ library(here)
 
 ### Data loading
 
-This path is currently absolute, which I have to fix but I cannot get the relative path to work currently so this will be updated in the future.
+Loading the data.
 
 ```{r}
-data <- read.csv(here("School", "Spring 2024", "Applied Data Analysis", "Project Repository", "HALL-MADA-project", "data", "processed-data", "Hot_100_Processed.csv"))
+data <- read.csv(here("data", "processed-data", "Hot_100_Processed.csv"))
 ```
 
 Creating binary flags for main genres to make analysis easier.
-
-This path is having the same issue, it will be updated to be relative.
 
 ```{r}
 # Binary flags for main genres (to make analysis easier)
@@ -50,7 +48,7 @@ binary_genres <- data %>%
     Genre_IndieAlt = ifelse(str_detect(main_genres, "indie_alt"), 1, 0)
   )
 
-write.csv(binary_genres, "/Users/lizahall/Desktop/School/Spring 2024/Applied Data Analysis/Project Repository/HALL-MADA-project/data/processed-data/Hot100s_BinaryGenres.csv", row.names=FALSE)
+write.csv(binary_genres, here("data", "processed-data", "Intermediates", "hot100s_binary_genres.csv"), row.names = FALSE)
 
 ```
 

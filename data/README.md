@@ -1,6 +1,9 @@
-The folders inside this folder should contain all data at various stages.
 
-Processed data is in the  `processed-data` folder.
+These folders contain all data at various stages.
 
-Raw, unedited data is in the `raw_data` folder.
+INDEX:
+
+processed-data - all processed data
+
+raw-data - raw, unedited data
 

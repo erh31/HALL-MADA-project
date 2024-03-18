@@ -1,9 +1,11 @@
 This folder contains code to do some simple starter analysis on the processed/cleaned data.
-The code produces a few tables and figures, which are saved in the `results` folder.
 
-* First, there is an R script that you can run which does all the computations.
-* Second, there is a Quarto file which contains exactly the same code as the R script.
+INDEX:
 
-Follow the instructions in the R Code/Quarto.
+StarterAnalaysis.R - contains the code for the starter analysis
 
+StarterAnalysis.html - rendered, walks through the code from StarterAnalaysis.R
 
+StarterAnalysis.qmd - contains the code from StarterAnalaysis.R
+
+StarterAnalysis_files - contains files produced by StarterAnalaysis.R, including figures

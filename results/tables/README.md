@@ -1,3 +1,2 @@
-Folder for all tables (generally stored as Rds files)
 
-You can create further sub-folders if that makes sense.
+This folder is currently empty, but will be for all tables (generally stored as Rds files)

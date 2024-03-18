@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Elizabeth Hall">
+
+<title>Cleaning and Condensing the Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="DataCleaning_files/libs/clipboard/clipboard.min.js"></script>
+<script src="DataCleaning_files/libs/quarto-html/quarto.js"></script>
+<script src="DataCleaning_files/libs/quarto-html/popper.min.js"></script>
+<script src="DataCleaning_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="DataCleaning_files/libs/quarto-html/anchor.min.js"></script>
+<link href="DataCleaning_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="DataCleaning_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="DataCleaning_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="DataCleaning_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="DataCleaning_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Cleaning and Condensing the Data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Elizabeth Hall </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="processing-script" class="level1">
+<h1>Processing Script</h1>
+<p>This file contains the code for processing the Hot_100.csv dataset. It will also contain some information on how to use the SpotifyAPI.</p>
+</section>
+<section id="condensing-and-cleaning-the-dataset" class="level1">
+<h1>Condensing and Cleaning the Dataset</h1>
+<p>Load needed packages, and make sure they are installed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at /Users/lizahall/Desktop/School/Spring 2024/Applied Data Analysis/Project Repository/HALL-MADA-project</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="data-loading" class="level3">
+<h3 class="anchored" data-anchor-id="data-loading">Data loading</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading data, removing columns, and renaming variables</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"raw-data"</span>, <span class="st">"Hot_100.csv"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>chart_debut, <span class="sc">-</span>chart_url, <span class="sc">-</span>song_id)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">artist =</span> performer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Converting dates to be more workable, and organizing by week, month, and year.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert chart_date to Date type (if not already done)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>chart_date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(data<span class="sc">$</span>chart_date)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add year, month, and week columns for grouping</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>year <span class="ot">&lt;-</span> <span class="fu">year</span>(data<span class="sc">$</span>chart_date)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>month <span class="ot">&lt;-</span> <span class="fu">month</span>(data<span class="sc">$</span>chart_date)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Using week of the year, adjust accordingly if you prefer week of the month</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>week <span class="ot">&lt;-</span> <span class="fu">week</span>(data<span class="sc">$</span>chart_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Establishing a ranking system, so as only to include the top songs and reduce dataset size.</p>
+<p>Songs are ranked by position on the charts, with time spent on the chart as a secondary ranking factor.</p>
+<p>Duplicates are removed, for easier processing when using the API later.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a ranking mechanism and filter to the top song per week, per month, per year</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>top_songs_per_week_month_year <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month, week) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year, month, week, peak_position, <span class="fu">desc</span>(time_on_chart)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove duplicates for processing purposes</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>unique_songs <span class="ot">&lt;-</span> top_songs_per_week_month_year <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(song, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="using-the-api" class="level3">
+<h3 class="anchored" data-anchor-id="using-the-api">Using the API</h3>
+<p>This process involves making a developer account in order to use the SpotifyAPI. It also involves the package spotifyr, which streamlines the process.</p>
+<p>Here are some helpful resources to reference when working with the API:</p>
+<p><a href="https://developer.spotify.com/documentation/web-api/tutorials/getting-started">Getting Started with Spotify WebAPI</a></p>
+<p><a href="https://www.rcharlie.com/spotifyr/">R Wrapper for the ‘Spotify’ Web API</a></p>
+<p>Loading the required libraries.</p>
+<p>The progress bar will be important in monitoring the progress of the API.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading required libraries</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spotifyr)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(progress)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here we have to input our SpotifyAPI credentials.</p>
+<p>These will be your own, and are acquired through your developer app. For more info on this process, reference the resources listed above.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># setting Spotify API credentials</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">SPOTIFY_CLIENT_ID =</span> <span class="st">"57747ecd81a847ca8f24909dc0b9583c"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">SPOTIFY_CLIENT_SECRET =</span> <span class="st">"4d32166a2afc4e50996a187f80b2382e"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>access_token <span class="ot">&lt;-</span> <span class="fu">get_spotify_access_token</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here we are going to get the Spotify song ids. These will be helpful for conducting further analysis, and gathering more data from the API if desired at a later time.</p>
+<p>First we are just adding a column for <code>spotify_song_id</code> to the dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a column for spotify_id if not exists</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"spotify_song_id"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(unique_songs)) {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  unique_songs<span class="sc">$</span>spotify_song_id <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here is the function to fetch the song ids from the API.</p>
+<p>Note there is a delay built into this function, that is important. Without it you may get kicked off the API for sending too many requests.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fetch_spotify_song_ids <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ensure access token is refreshed</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  access_token <span class="ot">&lt;-</span> <span class="fu">get_spotify_access_token</span>()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initialize progress bar</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">nrow</span>(df), <span class="at">format =</span> <span class="st">"[:bar] :percent ETA: :eta"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Delay to limit to 100 requests per minute</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  delay <span class="ot">&lt;-</span> <span class="fl">0.6</span> </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Iterate through the dataset</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)) {</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean artist and song names by removing leading and trailing whitespace</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    artist <span class="ot">&lt;-</span> <span class="fu">trimws</span>(df<span class="sc">$</span>artist[i])</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    song <span class="ot">&lt;-</span> <span class="fu">trimws</span>(df<span class="sc">$</span>song[i])</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Construct the query string</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    query <span class="ot">&lt;-</span> <span class="fu">paste</span>(artist, song)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Search for the song on Spotify using the spotify_song_id</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    search_result <span class="ot">&lt;-</span> <span class="fu">search_spotify</span>(<span class="at">q =</span> query, <span class="at">type =</span> <span class="st">"track"</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(search_result<span class="sc">$</span>id) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>      ssi <span class="ot">&lt;-</span> search_result<span class="sc">$</span>id[<span class="dv">1</span>]</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>spotify_song_id[i] <span class="ot">&lt;-</span> ssi</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>spotify_song_id[i] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update progress bar</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pause to ensure we don't exceed 100 requests per minute</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># SpotifyAPI does not like it when you exceed 180 requests per minute</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (found that one out the hard way...)</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Sys.sleep</span>(delay)</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then we run the function, and wait for it to complete.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>unique_songs_processed <span class="ot">&lt;-</span> <span class="fu">fetch_spotify_song_ids</span>(unique_songs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then repeat the process above, but this time fetching artist ids instead of song ids.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a column for spotify_id if not exists</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"spotify_artist_id"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(unique_songs_processed)) {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  unique_songs_processed<span class="sc">$</span>spotify_artist_id <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>fetch_spotify_artist_ids <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ensure access token is refreshed</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  access_token <span class="ot">&lt;-</span> <span class="fu">get_spotify_access_token</span>()</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initialize progress bar</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">nrow</span>(df), <span class="at">format =</span> <span class="st">"[:bar] :percent ETA: :eta"</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Delay to limit to 100 requests per minute</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  delay <span class="ot">&lt;-</span> <span class="fl">0.6</span> </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Iterate through the dataset</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)) {</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean artist and song names by removing leading and trailing whitespace</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    artist <span class="ot">&lt;-</span> <span class="fu">trimws</span>(df<span class="sc">$</span>artist[i])</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Construct the query string</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    query <span class="ot">&lt;-</span> <span class="fu">paste</span>(artist)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Search for the song on Spotify using the spotify_song_id</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    search_result <span class="ot">&lt;-</span> <span class="fu">search_spotify</span>(<span class="at">q =</span> query, <span class="at">type =</span> <span class="st">"artist"</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(search_result<span class="sc">$</span>id) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>      sai <span class="ot">&lt;-</span> search_result<span class="sc">$</span>id[<span class="dv">1</span>]</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>spotify_artist_id[i] <span class="ot">&lt;-</span> sai</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>spotify_artist_id[i] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update progress bar</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pause to ensure we don't exceed 100 requests per minute</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># SpotifyAPI does not like it when you exceed 180 requests per minute</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (found that one out the hard way...)</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Sys.sleep</span>(delay)</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>unique_songs_processed <span class="ot">&lt;-</span> <span class="fu">fetch_spotify_artist_ids</span>(unique_songs_processed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we are going to fetch the genres. This process is a bit different, as it is being called based on the artist id. Since we already have that we can go ahead and run the function to fetch the genres.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Before the loop, ensure the dataframe has a genres column</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="st">"genres"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(unique_songs_processed)) {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  unique_songs_processed<span class="sc">$</span>genres <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>fetch_genres <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ensure access token is refreshed</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  access_token <span class="ot">&lt;-</span> <span class="fu">get_spotify_access_token</span>()</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initialize progress bar</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">nrow</span>(df), <span class="at">format =</span> <span class="st">"[:bar] :percent ETA: :eta"</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Delay to limit to 100 requests per minute</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  delay <span class="ot">&lt;-</span> <span class="fl">0.6</span> </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Iterate through the dataset</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)) {</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean artist and song names by removing leading and trailing whitespace</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    artist_id <span class="ot">&lt;-</span> <span class="fu">trimws</span>(df<span class="sc">$</span>spotify_artist_id[i])</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Construct the query string</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    artist_info <span class="ot">&lt;-</span> <span class="fu">get_artist</span>(artist_id, access_token)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(artist_info<span class="sc">$</span>genres) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>      g <span class="ot">&lt;-</span> <span class="fu">paste</span>(artist_info<span class="sc">$</span>genres, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>genres[i] <span class="ot">&lt;-</span> g</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>genres[i] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Update progress bar</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>      pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Pause to ensure we don't exceed 100 requests per minute</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>      <span class="co"># SpotifyAPI does not like it when you exceed 180 requests per minute</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>      <span class="co"># (found that one out the hard way...)</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>      <span class="fu">Sys.sleep</span>(delay)</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(df)</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>unique_songs_processed <span class="ot">&lt;-</span> <span class="fu">fetch_genres</span>(unique_songs_processed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we are going to fetch the audio features.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to fetch audio features for each song</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fetch_audio_features <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ensure access token is refreshed</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  access_token <span class="ot">&lt;-</span> <span class="fu">get_spotify_access_token</span>()</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check if audio feature columns exist, if not add them</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  audio_features <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danceability"</span>, <span class="st">"energy"</span>, <span class="st">"key"</span>, <span class="st">"loudness"</span>, <span class="st">"mode"</span>, <span class="st">"speechiness"</span>, <span class="st">"acousticness"</span>, <span class="st">"instrumentalness"</span>, <span class="st">"liveness"</span>, <span class="st">"valence"</span>, <span class="st">"tempo"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (feature <span class="cf">in</span> audio_features) {</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>(feature <span class="sc">%in%</span> <span class="fu">colnames</span>(df))) {</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>      df[[feature]] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initialize progress bar</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  pb <span class="ot">&lt;-</span> progress_bar<span class="sc">$</span><span class="fu">new</span>(<span class="at">total =</span> <span class="fu">nrow</span>(df), <span class="at">format =</span> <span class="st">"[:bar] :percent ETA: :eta"</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Iterate through the dataset</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)) {</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    track_id <span class="ot">&lt;-</span> df<span class="sc">$</span>spotify_song_id[i]</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fetch audio features for the track</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(track_id)) {</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>      audio_feature <span class="ot">&lt;-</span> <span class="fu">get_track_audio_features</span>(track_id, access_token)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store each audio feature in the dataframe</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (feature <span class="cf">in</span> audio_features) {</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>        df[[feature]][i] <span class="ot">&lt;-</span> audio_feature[[feature]]</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update progress bar</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    pb<span class="sc">$</span><span class="fu">tick</span>()</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch audio features for the unique songs</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>unique_songs_processed <span class="ot">&lt;-</span> <span class="fu">fetch_audio_features</span>(unique_songs_processed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now the genre need to be simplified.</p>
+<p>This took quite a bit of time, but was worth it.</p>
+<p>To start, we print the list of all unique genre categories.</p>
+<p>This way, we know what we’re working with.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to extract variables from a column</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>extract_variables <span class="ot">&lt;-</span> <span class="cf">function</span>(column) {</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  all_variables <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">strsplit</span>(column, <span class="st">", "</span>))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(all_variables)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to remove duplicates from a vector</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>remove_duplicates <span class="ot">&lt;-</span> <span class="cf">function</span>(variables) {</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  unique_variables <span class="ot">&lt;-</span> <span class="fu">unique</span>(variables)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(unique_variables)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract variables from the column</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>all_variables <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(unique_songs_processed<span class="sc">$</span>genres, extract_variables))</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove duplicates</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>unique_variables <span class="ot">&lt;-</span> <span class="fu">remove_duplicates</span>(all_variables)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Print unique genre variables with double quotes around each element</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(<span class="fu">sprintf</span>(<span class="st">'"%s"'</span>, unique_variables), <span class="at">collapse =</span> <span class="st">", "</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>"adult standards", "doo-wop", "rock-and-roll", "rockabilly", "classic italian pop", "italian adult pop", "deep adult standards", "rhythm and blues", "arkansas country", "classic country pop", "country", "country rock", "NA", "easy listening", "louisiana blues", "memphis blues", "new orleans blues", "bubblegum pop", "vocal harmony group", "hammond organ", "jazz organ", "cowboy western", "space age pop", "surf music", "lounge", "vocal jazz", "man's orchestra", "folk rock", "mellow gold", "sunshine pop", "brill building pop", "soul", "ballroom", "classic girl group", "classic soul", "motown", "classic rock", "singer-songwriter", "outlaw country", "chicago soul", "northern soul", "southern soul", "jazz clarinet", "jazz blues", "piano blues", "soul blues", "soft rock", "classic garage rock", "merseybeat", "enka", "beach music", "philly soul", "swamp pop", "belgian singer-songwriter", "british invasion", "psychedelic rock", "rock", "dixieland", "harlem renaissance", "jazz trumpet", "new orleans jazz", "swing", "baroque pop", "disco", "album rock", "hard rock", "protopunk", "memphis soul", "quiet storm", "folk", "beatlesque", "blues rock", "cosmic american", "heartland rock", "melancholia", "military cadence", "british folk", "glam rock", "psychedelic folk", "scottish singer-songwriter", "chicano punk", "detroit rock", "vaudeville", "acid rock", "afropop", "south african jazz", "neo soul", "funk", "funk rock", "p funk", "psychedelic soul", "rock keyboard", "classic soundtrack", "classic canadian rock", "american folk revival", "novelty", "halloween", "yacht rock", "vintage hollywood", "k-pop", "dance pop", "pop", "alt z", "electropop", "canadian singer-songwriter", "permanent wave", "roots rock", "r&amp;b", "blues", "piano rock", "nashville sound", "operatic pop", "classic uk pop", "canadian country", "art rock", "new mexico music", "jazz funk", "post-disco", "british blues", "progressive rock", "symphonic rock", "europop", "swedish pop", "new wave pop", "australian dance", "hollywood", "hi-nrg", "candy pop", "power pop", "synthpop", "modern blues rock", "modern southern rock", "alternative hip hop", "east coast hip hop", "hip hop", "instrumental hip hop", "rap", "minneapolis sound", "country dawn", "glam metal", "new romantic", "australian rock", "glam punk", "cyberpunk", "synthesizer", "new wave", "sophisti-pop", "smooth jazz", "dance rock", "rock drums", "contemporary r&amp;b", "urban contemporary", "synth funk", "scottish new wave", "jazz fusion", "british soul", "jangle pop", "paisley underground", "irish rock", "new jack swing", "metal", "reggae fusion", "uk reggae", "freestyle", "girl group", "lovers rock", "reggae", "bedroom soul", "diva house", "eurodance", "hip house", "christian music", "boy band", "funk metal", "britpop", "grebo", "indietronica", "madchester", "canadian pop", "old school hip hop", "hip pop", "lilith", "pop rock", "roots reggae", "atl hip hop", "g funk", "gangster rap", "west coast rap", "tropical", "hardcore hip hop", "desi hip hop", "desi trap", "hindi hip hop", "alternative r&amp;b", "conscious hip hop", "new jersey rap", "neo mellow", "post-grunge", "alternative metal", "nu metal", "barbadian pop", "canadian rock", "pop rap", "st louis rap", "talent show", "detroit hip hop", "queens hip hop", "dancehall", "dirty south rap", "old school atlanta hip hop", "southern hip hop", "trap", "south carolina hip hop", "crunk", "north carolina hip hop", "rap kreyol", "canadian latin", "modern rock", "neon pop punk", "pop punk", "miami hip hop", "art pop", "russian pop", "pop soul", "uk pop", "afrofuturism", "australian pop", "seattle hip hop", "metropopolis", "nz pop", "memphis hip hop", "australian hip hop", "pittsburgh rap", "canadian contemporary r&amp;b", "singer-songwriter pop", "atl trap", "melodic rap", "trap soul", "slap house", "etherpop", "indie poptimism", "lgbtq+ hip hop", "dfw rap", "indie electropop", "gauze pop", "pov: indie", "shiver pop"</code></pre>
+</div>
+</div>
+<p>First step was to make a variable with all the genres.</p>
+<p>Not pretty, but it got the job done and was straightfoward.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The printed list of genres</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is not the prettiest way to do this, but it gets the job done</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>genres <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"adult standards"</span>, <span class="st">"doo-wop"</span>, <span class="st">"rock-and-roll"</span>, <span class="st">"rockabilly"</span>, <span class="st">"classic italian pop"</span>, <span class="st">"italian adult pop"</span>, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"deep adult standards"</span>, <span class="st">"rhythm and blues"</span>, <span class="st">"arkansas country"</span>, <span class="st">"classic country pop"</span>, <span class="st">"country"</span>, <span class="st">"country rock"</span>, </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"NA"</span>, <span class="st">"easy listening"</span>, <span class="st">"louisiana blues"</span>, <span class="st">"memphis blues"</span>, <span class="st">"new orleans blues"</span>, <span class="st">"bubblegum pop"</span>, <span class="st">"vocal harmony group"</span>, </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">"hammond organ"</span>, <span class="st">"jazz organ"</span>, <span class="st">"cowboy western"</span>, <span class="st">"space age pop"</span>, <span class="st">"surf music"</span>, <span class="st">"lounge"</span>, <span class="st">"vocal jazz"</span>, <span class="st">"man's orchestra"</span>, </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"folk rock"</span>, <span class="st">"mellow gold"</span>, <span class="st">"sunshine pop"</span>, <span class="st">"brill building pop"</span>, <span class="st">"soul"</span>, <span class="st">"ballroom"</span>, <span class="st">"classic girl group"</span>, </span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"classic soul"</span>, <span class="st">"motown"</span>, <span class="st">"classic rock"</span>, <span class="st">"singer-songwriter"</span>, <span class="st">"outlaw country"</span>, <span class="st">"chicago soul"</span>, <span class="st">"northern soul"</span>, </span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"southern soul"</span>, <span class="st">"jazz clarinet"</span>, <span class="st">"jazz blues"</span>, <span class="st">"piano blues"</span>, <span class="st">"soul blues"</span>, <span class="st">"soft rock"</span>, <span class="st">"classic garage rock"</span>, </span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"merseybeat"</span>, <span class="st">"enka"</span>, <span class="st">"beach music"</span>, <span class="st">"philly soul"</span>, <span class="st">"swamp pop"</span>, <span class="st">"belgian singer-songwriter"</span>, <span class="st">"british invasion"</span>, </span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"psychedelic rock"</span>, <span class="st">"rock"</span>, <span class="st">"dixieland"</span>, <span class="st">"harlem renaissance"</span>, <span class="st">"jazz trumpet"</span>, <span class="st">"new orleans jazz"</span>, <span class="st">"swing"</span>, <span class="st">"baroque pop"</span>, </span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">"disco"</span>, <span class="st">"album rock"</span>, <span class="st">"hard rock"</span>, <span class="st">"protopunk"</span>, <span class="st">"memphis soul"</span>, <span class="st">"quiet storm"</span>, <span class="st">"folk"</span>, <span class="st">"beatlesque"</span>, <span class="st">"blues rock"</span>, </span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"cosmic american"</span>, <span class="st">"heartland rock"</span>, <span class="st">"melancholia"</span>, <span class="st">"military cadence"</span>, <span class="st">"british folk"</span>, <span class="st">"glam rock"</span>, <span class="st">"psychedelic folk"</span>, </span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">"scottish singer-songwriter"</span>, <span class="st">"chicano punk"</span>, <span class="st">"detroit rock"</span>, <span class="st">"vaudeville"</span>, <span class="st">"acid rock"</span>, <span class="st">"afropop"</span>, <span class="st">"south african jazz"</span>, </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">"neo soul"</span>, <span class="st">"funk"</span>, <span class="st">"funk rock"</span>, <span class="st">"p funk"</span>, <span class="st">"psychedelic soul"</span>, <span class="st">"rock keyboard"</span>, <span class="st">"classic soundtrack"</span>, <span class="st">"classic canadian rock"</span>, </span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">"american folk revival"</span>, <span class="st">"novelty"</span>, <span class="st">"halloween"</span>, <span class="st">"yacht rock"</span>, <span class="st">"vintage hollywood"</span>, <span class="st">"k-pop"</span>, <span class="st">"dance pop"</span>, <span class="st">"pop"</span>, <span class="st">"alt z"</span>, </span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">"electropop"</span>, <span class="st">"canadian singer-songwriter"</span>, <span class="st">"permanent wave"</span>, <span class="st">"roots rock"</span>, <span class="st">"r&amp;b"</span>, <span class="st">"blues"</span>, <span class="st">"piano rock"</span>, <span class="st">"nashville sound"</span>, </span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">"operatic pop"</span>, <span class="st">"classic uk pop"</span>, <span class="st">"boy band"</span>, <span class="st">"canadian country"</span>, <span class="st">"art rock"</span>, <span class="st">"new mexico music"</span>, <span class="st">"jazz funk"</span>, <span class="st">"post-disco"</span>, </span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"british blues"</span>, <span class="st">"progressive rock"</span>, <span class="st">"symphonic rock"</span>, <span class="st">"europop"</span>, <span class="st">"swedish pop"</span>, <span class="st">"new wave pop"</span>, <span class="st">"australian dance"</span>, <span class="st">"hollywood"</span>, </span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"hi-nrg"</span>, <span class="st">"candy pop"</span>, <span class="st">"power pop"</span>, <span class="st">"synthpop"</span>, <span class="st">"modern blues rock"</span>, <span class="st">"modern southern rock"</span>, <span class="st">"alternative hip hop"</span>, <span class="st">"east coast hip hop"</span>, </span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">"hip hop"</span>, <span class="st">"instrumental hip hop"</span>, <span class="st">"rap"</span>, <span class="st">"minneapolis sound"</span>, <span class="st">"country dawn"</span>, <span class="st">"glam metal"</span>, <span class="st">"new romantic"</span>, <span class="st">"australian rock"</span>, </span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">"glam punk"</span>, <span class="st">"cyberpunk"</span>, <span class="st">"synthesizer"</span>, <span class="st">"new wave"</span>, <span class="st">"sophisti-pop"</span>, <span class="st">"dance rock"</span>, <span class="st">"rock drums"</span>, <span class="st">"contemporary r&amp;b"</span>, </span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>            <span class="st">"urban contemporary"</span>, <span class="st">"synth funk"</span>, <span class="st">"scottish new wave"</span>, <span class="st">"jazz fusion"</span>, <span class="st">"british soul"</span>, <span class="st">"jangle pop"</span>, <span class="st">"paisley underground"</span>, </span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>            <span class="st">"irish rock"</span>, <span class="st">"new jack swing"</span>, <span class="st">"metal"</span>, <span class="st">"reggae fusion"</span>, <span class="st">"uk reggae"</span>, <span class="st">"freestyle"</span>, <span class="st">"girl group"</span>, <span class="st">"lovers rock"</span>, <span class="st">"reggae"</span>, </span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>            <span class="st">"bedroom soul"</span>, <span class="st">"diva house"</span>, <span class="st">"eurodance"</span>, <span class="st">"hip house"</span>, <span class="st">"christian music"</span>, <span class="st">"funk metal"</span>, <span class="st">"britpop"</span>, <span class="st">"grebo"</span>, <span class="st">"indietronica"</span>, </span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>            <span class="st">"madchester"</span>, <span class="st">"canadian pop"</span>, <span class="st">"old school hip hop"</span>, <span class="st">"alternative r&amp;b"</span>, <span class="st">"rap latina"</span>, <span class="st">"trap queen"</span>, <span class="st">"hip pop"</span>, <span class="st">"lilith"</span>, </span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">"pop rock"</span>, <span class="st">"roots reggae"</span>, <span class="st">"atl hip hop"</span>, <span class="st">"g funk"</span>, <span class="st">"gangster rap"</span>, <span class="st">"west coast rap"</span>, <span class="st">"tropical"</span>, <span class="st">"hardcore hip hop"</span>, </span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">"conscious hip hop"</span>, <span class="st">"new jersey rap"</span>, <span class="st">"neo mellow"</span>, <span class="st">"post-grunge"</span>, <span class="st">"alternative metal"</span>, <span class="st">"nu metal"</span>, <span class="st">"barbadian pop"</span>, </span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"canadian rock"</span>, <span class="st">"pop rap"</span>, <span class="st">"st louis rap"</span>, <span class="st">"talent show"</span>, <span class="st">"detroit hip hop"</span>, <span class="st">"queens hip hop"</span>, <span class="st">"dancehall"</span>, <span class="st">"dirty south rap"</span>, </span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"old school atlanta hip hop"</span>, <span class="st">"southern hip hop"</span>, <span class="st">"trap"</span>, <span class="st">"crunk"</span>, <span class="st">"north carolina hip hop"</span>, <span class="st">"rap kreyol"</span>, <span class="st">"canadian latin"</span>, </span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"country rap"</span>, <span class="st">"redneck"</span>, <span class="st">"modern rock"</span>, <span class="st">"neon pop punk"</span>, <span class="st">"pop punk"</span>, <span class="st">"miami hip hop"</span>, <span class="st">"art pop"</span>, <span class="st">"russian pop"</span>, <span class="st">"pop soul"</span>, </span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"uk pop"</span>, <span class="st">"afrofuturism"</span>, <span class="st">"australian pop"</span>, <span class="st">"seattle hip hop"</span>, <span class="st">"metropopolis"</span>, <span class="st">"nz pop"</span>, <span class="st">"memphis hip hop"</span>, <span class="st">"australian hip hop"</span>, </span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"canadian contemporary r&amp;b"</span>, <span class="st">"singer-songwriter pop"</span>, <span class="st">"denpa-kei"</span>, <span class="st">"rhythm game"</span>, <span class="st">"trap soul"</span>, <span class="st">"slap house"</span>, <span class="st">"etherpop"</span>, </span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">"indie poptimism"</span>, <span class="st">"melodic rap"</span>, <span class="st">"lgbtq+ hip hop"</span>, <span class="st">"dfw rap"</span>, <span class="st">"indie electropop"</span>, <span class="st">"gauze pop"</span>, <span class="st">"pov: indie"</span>, <span class="st">"shiver pop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next lists were created. This is so that they can be used for mapping, which will be used to sort the main dataset later.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize empty lists for each main genre category</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>pop_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>rock_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>country_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>jazz_blues_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>soul_funk_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>hip_hop_rap_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>electronic_dance_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">r&amp;b_reggae_genres</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>world_regional_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>indie_alt_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>classic_folk_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>other_genres <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>no_genre <span class="ot">&lt;-</span> <span class="fu">list</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, the first round of sorting checks <code>genres</code> for certain phrases.</p>
+<p>Ex: if a genre contains “pop” it is sorted into the pop_genres list.</p>
+<p>The world_regional_genres was a little more complicated. I utilized ChatGPT to help me pick out all the nationalities/cities that were mentioned, so that those could also be identified in this first round of sorting which will save time in the next steps.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort genres into lists</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Allows subgenres to fall into multiple main genre categories</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (genre <span class="cf">in</span> genres) {</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"pop"</span>, genre)) pop_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(pop_genres, genre)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"rock"</span>, genre)) rock_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(rock_genres, genre)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"country"</span>, genre)) country_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(country_genres, genre)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"jazz|blues"</span>, genre)) jazz_blues_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(jazz_blues_genres, genre)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"soul|funk"</span>, genre)) soul_funk_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(soul_funk_genres, genre)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"hip hop|rap"</span>, genre)) hip_hop_rap_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(hip_hop_rap_genres, genre)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"electronic|dance"</span>, genre)) electronic_dance_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(electronic_dance_genres, genre)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"r&amp;b|reggae"</span>, genre)) <span class="st">`</span><span class="at">r&amp;b_reggae_genres</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">r&amp;b_reggae_genres</span><span class="st">`</span>, genre)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"folk"</span>, genre)) classic_folk_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(classic_folk_genres, genre) <span class="co"># not sorting by 'classic' because 'classic rock' or similar examples would be miscategorized</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"indie|alternative"</span>, genre)) indie_alt_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(indie_alt_genres, genre)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this one is longer, because there are a lot of world/regional genres in the list</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># provided ChatGPT with the list of genres and had it help me pick out the cities/nationalities</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">b(italian|new mexico|arkansas|louisiana|memphis|new orleans|belgian|british|scottish|chicano|detroit|south african|american|canadian|swedish|australian|hollywood|irish|uk|barbadian|st louis|queens|atlanta|atl|miami|russian|seattle|nz|dfw)</span><span class="sc">\\</span><span class="st">b"</span>, genre)) world_regional_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(world_regional_genres, genre)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, the stragglers needed to be sorted.</p>
+<p>To do this, all the lists were combined and then checked via the find_missing_genres function.</p>
+<p>Any genre from <code>genres</code> that was not present in the combined list were added to a vector called missing_genres. The missing_genres vector was then printed for easier manipulation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define genre_mapping based on the populated lists</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>genre_mapping <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pop =</span> pop_genres,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rock =</span> rock_genres,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> country_genres,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">jazz_blues =</span> jazz_blues_genres,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">soul_funk =</span> soul_funk_genres,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">hip_hop_rap =</span> hip_hop_rap_genres,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">electronic_dance =</span> electronic_dance_genres,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">r&amp;b_reggae</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">r&amp;b_reggae_genres</span><span class="st">`</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">world_regional =</span> world_regional_genres,</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">indie_alt =</span> indie_alt_genres,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">classic_folk =</span> classic_folk_genres,</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">other =</span> other_genres,</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">no_genre =</span> no_genre</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine all genres from the genre_mapping into a single vector</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>all_categorized_genres <span class="ot">&lt;-</span> <span class="fu">unlist</span>(genre_mapping)</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to find genres not present in the aggregated list</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>find_missing_genres <span class="ot">&lt;-</span> <span class="cf">function</span>(genres_list, all_categorized_genres) {</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  missing_genres <span class="ot">&lt;-</span> <span class="fu">list</span>() <span class="co"># Initialize an empty list for missing genres</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop through the original genres list</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (genre <span class="cf">in</span> genres_list) {</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if the genre is not in the aggregated genres vector</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>genre <span class="sc">%in%</span> all_categorized_genres) {</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>      missing_genres <span class="ot">&lt;-</span> <span class="fu">c</span>(missing_genres, genre) <span class="co"># Add missing genre to the list</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(missing_genres)</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the function with the original genres list and the aggregated categorized genres</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>missing_genres <span class="ot">&lt;-</span> <span class="fu">find_missing_genres</span>(genres, all_categorized_genres)</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the list of missing genres</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(missing_genres, <span class="at">collapse =</span> <span class="st">", "</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>adult standards, doo-wop, deep adult standards, NA, easy listening, vocal harmony group, hammond organ, cowboy western, surf music, lounge, man's orchestra, mellow gold, ballroom, classic girl group, motown, singer-songwriter, merseybeat, enka, beach music, dixieland, harlem renaissance, swing, disco, protopunk, quiet storm, beatlesque, melancholia, military cadence, vaudeville, classic soundtrack, novelty, halloween, alt z, permanent wave, nashville sound, boy band, post-disco, hi-nrg, minneapolis sound, glam metal, new romantic, glam punk, cyberpunk, synthesizer, new wave, urban contemporary, paisley underground, new jack swing, metal, freestyle, girl group, diva house, hip house, christian music, grebo, madchester, lilith, tropical, neo mellow, post-grunge, nu metal, talent show, crunk, redneck, afrofuturism, denpa-kei, rhythm game, slap house</code></pre>
+</div>
+</div>
+<p>This next part took quite a bit of time and manual work.</p>
+<p>All of the sorting for the stragglers was done manually. I referenced online sources and put each genre into the main genre categories that most sources agreed they belonged to. Some belonged to multiple, and in this case were added to both main genre categories.</p>
+<p>I then re-checked for missing genres, to ensure that everything had been sorted.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The sorting of the remaining genres was done manually, now that the list had</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># been narrowed down to only those whose parent genre was not apparent</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># I googled each of the remaining genres, and sorted them into the main genre(s) to</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># which most sources seemed to agree that they belong</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Manually adding straggler to their genre lists</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>pop <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>pop, <span class="st">"lounge"</span>,  <span class="st">"beach music"</span>, <span class="st">"disco"</span>, <span class="st">"permanent wave"</span>,  <span class="st">"boy band"</span>,  <span class="st">"post-disco"</span>,  <span class="st">"paisley underground"</span>, <span class="st">"girl group"</span>,  <span class="st">"madchester"</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>rock <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>rock, <span class="st">"surf music"</span>, <span class="st">"merseybeat"</span>, <span class="st">"beach music"</span>, <span class="st">"british invasion"</span>, <span class="st">"protopunk"</span>, <span class="st">"beatlesque"</span>, <span class="st">"cosmic american"</span>, <span class="st">"permanent wave"</span>, <span class="st">"minneapolis sound"</span>, <span class="st">"glam metal"</span>, <span class="st">"new romantic"</span>, <span class="st">"glam punk"</span>, <span class="st">"new wave"</span>, <span class="st">"metal"</span>, <span class="st">"paisley underground"</span>, <span class="st">"grebo"</span>, <span class="st">"post-grunge"</span>, <span class="st">"nu metal"</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>country <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>country, <span class="st">"cowboy western"</span>, <span class="st">"cosmic american"</span>,  <span class="st">"nashville sound"</span>, <span class="st">"redneck"</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>jazz_blues <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>jazz_blues, <span class="st">"afrofuturism"</span>, <span class="st">"cosmic american"</span>, <span class="st">"dixieland"</span>, <span class="st">"hammond organ"</span>, <span class="st">"harlem renaissance"</span>, <span class="st">"swing"</span>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>soul_funk <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>soul_funk, <span class="st">"afrofuturism"</span>, <span class="st">"disco"</span>, <span class="st">"minneapolis sound"</span>, <span class="st">"motown"</span>, <span class="st">"new jack swing"</span>, <span class="st">"permanent wave"</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>hip_hop_rap <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>hip_hop_rap,  <span class="st">"alt z"</span>, <span class="st">"urban contemporary"</span>,  <span class="st">"crunk"</span>,  <span class="st">"afrofuturism"</span>, <span class="st">"new jack swing"</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>electronic_dance <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>electronic_dance, <span class="st">"afrofuturism"</span>, <span class="st">"ballroom"</span>,  <span class="st">"post-disco"</span>, <span class="st">"disco"</span>, <span class="st">"hi-nrg"</span>,  <span class="st">"cyberpunk"</span>,  <span class="st">"synthesizer"</span>,  <span class="st">"diva house"</span>, <span class="st">"hip house"</span>, <span class="st">"slap house"</span>)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span><span class="st">`</span><span class="at">r&amp;b_reggae</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span><span class="st">`</span><span class="at">r&amp;b_reggae</span><span class="st">`</span>, <span class="st">"doo-wop"</span>, <span class="st">"merseybeat"</span>, <span class="st">"motown"</span>, <span class="st">"new jack swing"</span>, <span class="st">"quiet storm"</span>)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>classic_folk <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>classic_folk, <span class="st">"adult standards"</span>, <span class="st">"deep adult standards"</span>, <span class="st">"easy listening"</span>, <span class="st">"vocal harmony group"</span>,  <span class="st">"classic girl group"</span>, <span class="st">"military cadence"</span>, <span class="st">"classic soundtrack"</span>, <span class="st">"nashville sound"</span>, <span class="st">"lilith"</span>)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>world_regional <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>world_regional, <span class="st">"enka"</span>, <span class="st">"vaudeville"</span>, <span class="st">"freestyle"</span>,  <span class="st">"tropical"</span>, <span class="st">"denpa-kei"</span>)</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>indie_alt <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>indie_alt, <span class="st">"man's orchestra"</span>, <span class="st">"mellow gold"</span>,  <span class="st">"grebo"</span>,  <span class="st">"madchester"</span>,  <span class="st">"lilith"</span>, <span class="st">"neo mellow"</span>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>other <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>other, <span class="st">"singer-songwriter"</span>, <span class="st">"melancholia"</span>, <span class="st">"novelty"</span>, <span class="st">"halloween"</span>, <span class="st">"vintage hollywood"</span>,  <span class="st">"hollywood"</span>, <span class="st">"christian music"</span>,  <span class="st">"talent show"</span>, <span class="st">"rhythm game"</span>)</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>genre_mapping<span class="sc">$</span>no_genre <span class="ot">&lt;-</span> <span class="fu">c</span>(genre_mapping<span class="sc">$</span>no_genre,<span class="st">"NA"</span>)</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-check for missing genres</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>all_categorized_genres <span class="ot">&lt;-</span> <span class="fu">unlist</span>(genre_mapping)</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>missing_genres <span class="ot">&lt;-</span> <span class="fu">find_missing_genres</span>(genres, all_categorized_genres)</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(missing_genres, <span class="at">collapse =</span> <span class="st">", "</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The next step was mapping these genres to the dataset.</p>
+<p>Using the genre_mapping vector from before, the map_subgenres_to_main function below was used to map the main genres to the existing dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to map subgenres to main genres and append them to a new column</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>map_subgenres_to_main <span class="ot">&lt;-</span> <span class="cf">function</span>(df, genre_mapping) {</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a new column 'main_genres' initialized with empty strings</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>main_genres <span class="ot">&lt;-</span> <span class="st">""</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Iterate over each row of the dataframe</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)) {</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    main_genres_set <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>) <span class="co"># Initialize an empty vector to store main genres for this row</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract the subgenres list for the current row, assuming they are comma-separated</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    subgenres_list <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(<span class="fu">as.character</span>(df<span class="sc">$</span>genres[i]), <span class="st">", "</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Iterate over each subgenre and map it to its main genres</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (subgenre <span class="cf">in</span> subgenres_list) {</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (main_genre <span class="cf">in</span> <span class="fu">names</span>(genre_mapping)) {</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (subgenre <span class="sc">%in%</span> genre_mapping[[main_genre]]) {</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Append the main genre if the subgenre is found within its list</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>          main_genres_set <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(main_genres_set, main_genre))</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Concatenate the unique main genres back to a comma-separated string</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>    df<span class="sc">$</span>main_genres[i] <span class="ot">&lt;-</span> <span class="fu">paste</span>(main_genres_set, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to your dataframe</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>unique_songs_mapped <span class="ot">&lt;-</span> <span class="fu">map_subgenres_to_main</span>(unique_songs_processed, genre_mapping)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next the dataset containing only unique song instances was merged with the dataset that contains all instances. This is easier than trying to use the API on all instances, as the unique instances dataset is much smaller.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Creating dataset, but not removing duplicates</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the datasets</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>hot100_processed <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"raw-data"</span>,<span class="st">"Hot_100.csv"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>chart_debut, <span class="sc">-</span>chart_url, <span class="sc">-</span>song_id) <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">artist =</span> performer)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert chart_date to Date type (if not already done)</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>hot100_processed<span class="sc">$</span>chart_date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(hot100_processed<span class="sc">$</span>chart_date)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Add year, month, and week columns for grouping</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>hot100_processed <span class="ot">&lt;-</span> hot100_processed <span class="sc">%&gt;%</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(chart_date),</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">month =</span> <span class="fu">month</span>(chart_date),</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">week =</span> <span class="fu">week</span>(chart_date)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the top song per week, per month, per year</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>top_songs_per_week_month_year <span class="ot">&lt;-</span> hot100_processed <span class="sc">%&gt;%</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month, week) <span class="sc">%&gt;%</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year, month, week, peak_position, <span class="fu">desc</span>(time_on_chart)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize additional columns with NA</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>top_songs_per_week_month_year <span class="ot">&lt;-</span> top_songs_per_week_month_year <span class="sc">%&gt;%</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">main_genres =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">spotify_song_id =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">spotify_artist_id =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">genres =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">danceability =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">energy =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">loudness =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">mode =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">speechiness =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">acousticness =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">instrumentalness =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">liveness =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">valence =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">tempo =</span> <span class="cn">NA</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform a left join to match the columns by artist and year</span></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>hot100_processed_updated <span class="ot">&lt;-</span> <span class="fu">left_join</span>(top_songs_per_week_month_year, unique_songs_mapped <span class="sc">%&gt;%</span> <span class="fu">select</span>(song, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, artist, year, main_genres, spotify_song_id, spotify_artist_id, genres), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"artist"</span>, <span class="st">"song"</span>), <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"_new"</span>))</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a><span class="co"># For each column that we wanted to replace, we'll update it from the new columns</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>hot100_processed_updated <span class="ot">&lt;-</span> hot100_processed_updated <span class="sc">%&gt;%</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">main_genres =</span> <span class="fu">coalesce</span>(main_genres_new, main_genres),</span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">spotify_song_id =</span> <span class="fu">coalesce</span>(spotify_song_id_new, spotify_song_id),</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">spotify_artist_id =</span> <span class="fu">coalesce</span>(spotify_artist_id_new, spotify_artist_id),</span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">danceability =</span> <span class="fu">coalesce</span>(danceability_new, danceability),</span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">genres =</span> <span class="fu">coalesce</span>(genres_new, genres),</span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">energy =</span> <span class="fu">coalesce</span>(energy_new, energy),</span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="fu">coalesce</span>(key_new, key),</span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">loudness =</span> <span class="fu">coalesce</span>(loudness_new, loudness),</span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">mode =</span> <span class="fu">coalesce</span>(mode_new, mode),</span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">speechiness =</span> <span class="fu">coalesce</span>(speechiness_new, speechiness),</span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">acousticness =</span> <span class="fu">coalesce</span>(acousticness_new, acousticness),</span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">instrumentalness =</span> <span class="fu">coalesce</span>(instrumentalness_new, instrumentalness),</span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">liveness =</span> <span class="fu">coalesce</span>(liveness_new, liveness),</span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">valence =</span> <span class="fu">coalesce</span>(valence_new, valence),</span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">tempo =</span> <span class="fu">coalesce</span>(tempo_new, tempo)</span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">"_new"</span>))  <span class="co"># Remove the new columns after replacing the original ones</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="saving-the-data" class="level1">
+<h1>Saving the Data</h1>
+<p>Finally, the data is saved as a csv to the processed-data folder. Saving at various stages of processing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print to csv</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(hot100_processed_updated, <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"processed-data"</span>, <span class="st">"Hot_100_Processed.csv"</span>), <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(hot100_processed_updated, <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"processed-data"</span>, <span class="st">"unique_songs_processed.csv"</span>), <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(unique_songs_mapped, <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"processed-data"</span>, <span class="st">"unique_songs_mapped.csv"</span>), <span class="at">row.names=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

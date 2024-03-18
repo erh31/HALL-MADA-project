@@ -1,6 +1,7 @@
 This folder contains folders which contain various forms of analysis code.
 
-There will be R Script and Quarto documents in each folder which explain the code.
+INDEX:
 
+starter-analysis - contains code/files for some starter analysis (figures, basic model fitting)
 
 

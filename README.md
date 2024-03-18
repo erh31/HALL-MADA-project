@@ -1,19 +1,43 @@
-# Overview
+ 
+---
 
-A template file and folder structure for a data analysis project/paper done with R/Quarto/Github.
+Temporal Trends in Popular Music Genres: A Data-Driven Analysis
+
+By Elizabeth Hall
 
 ---
 
-# The Process so Far: 
+INDEX: 
 
-In order to reproduce results up to this point in the manuscript, follow the process outlined in eda.qmd and processingfile-v1.qmd.
-The original code for these two files can be found in DataExploration.R and DataCleaning.R. 
+data - contains all data used in the project
 
-The raw, uncleaned data is in the raw data folder, and is titled `Hot_100.csv`.
+results - contains all results related to the project
 
-Figures found in the manuscript can be found in the results file under figures.
-The stats summary found in the manuscript can be found in the results file under output. 
+products - contains all products produced by project
+
+R - contains all code used in the project
+
+--- 
+
+# The Process
+
+- Raw Data
+	- the raw, uncleaned data is in the raw data folder, and is titled `Hot_100.csv`
+
+- Data Cleaning
+
+	- see readme.md in processing-code (R/processing-code)
+	- follow processes as laid out in the quarto file
+
+- Analysis
+
+	- see readme.md in analysis-code (R/analysis-code) and eda-code (R/eda-code)
+	- follow the processes as laid out in the quarto file
 
 ---
+
+# LINKS
+
+GitHub - https://github.com/erh31/HALL-MADA-project
 
 

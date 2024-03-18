@@ -5,9 +5,10 @@
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
+library(here)
 
 # Load data
-data <- read.csv("./data/processed-data/Hot_100.csv")
+data <- read.csv(here("data", "processed-data", "Hot_100.csv"))
 
 # Summary statistics
 summary_stats <- summary(hot100_processed)

@@ -1,4 +1,8 @@
-This folder contains the Hot_100.csv file which contains data for the billboard hot 100s from the 1950s to 2023.
+
+
+This folder contains raw, unedited data.
+ 
+The Hot_100.csv file contains data for the billboard hot 100s from the 1950s to 2023.
 
 It contains the following variables:
 `chart_position`

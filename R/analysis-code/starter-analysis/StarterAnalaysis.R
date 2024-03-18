@@ -7,7 +7,7 @@ library(stringr)
 # VISUAL ANALYSIS
 
 # Load the dataset
-data <- read.csv("./data/processed-data/Hot_100_Processed.csv")
+data <- read.csv(here("data", "processed-data", "Hot_100_Processed.csv"))
 
 
 # Binary flags for main genres (to make analysis easier)
@@ -26,7 +26,7 @@ binary_genres <- data %>%
     Genre_IndieAlt = ifelse(str_detect(main_genres, "indie_alt"), 1, 0)
   )
 
-write.csv(binary_genres, "./data/processed-data/Hot100s_BinaryGenres.csv", row.names=FALSE)
+write.csv(binary_genres, here("data", "processed-data", "Intermediate", "Hot100s_BinaryGenres.csv"), row.names = FALSE)
 
 
 # Assuming 'data' is your dataset with binary flags for genres and 'year' is the year column
