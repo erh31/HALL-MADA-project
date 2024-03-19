@@ -24,7 +24,7 @@ R - contains all code used in the project
 - Raw Data
 	- the raw, uncleaned data is in the raw data folder, and is titled `Hot_100.csv`
 
-- Data Cleaning
+- Data Cleaning/Processing
 
 	- see readme.md in processing-code (R/processing-code)
 	- follow processes as laid out in the quarto file
