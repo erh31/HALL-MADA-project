@@ -73,12 +73,9 @@ artist_genre_mapping <- list(
 
 
 update_genres <- function(data, mapping) {
-  # Iterate over the mapping to update the data
   for (artist in names(mapping)) {
-    # Find rows with the current artist and update main_genres
-    genre <- mapping[[artist]]
-    data <- data %>%
-      mutate(main_genres = ifelse(artist == !!artist, genre, main_genres))
+    indices <- which(data$artist == artist)
+    data$main_genres[indices] <- mapping[[artist]]
   }
   return(data)
 }

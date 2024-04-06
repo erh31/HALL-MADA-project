@@ -1,5 +1,5 @@
 ---
-title: "Starter Analysis"
+title: "Genre Popularity Over Time"
 author: "Elizabeth Hall"
 output: html_document
 ---

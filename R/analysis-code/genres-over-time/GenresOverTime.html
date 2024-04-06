@@ -8,7 +8,7 @@
 
 <meta name="author" content="Elizabeth Hall">
 
-<title>Starter Analysis</title>
+<title>Genre Popularity Over Time</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,16 +58,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="StarterAnalysis_files/libs/clipboard/clipboard.min.js"></script>
-<script src="StarterAnalysis_files/libs/quarto-html/quarto.js"></script>
-<script src="StarterAnalysis_files/libs/quarto-html/popper.min.js"></script>
-<script src="StarterAnalysis_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="StarterAnalysis_files/libs/quarto-html/anchor.min.js"></script>
-<link href="StarterAnalysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="StarterAnalysis_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="StarterAnalysis_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="StarterAnalysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="StarterAnalysis_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="GenresOverTime_files/libs/clipboard/clipboard.min.js"></script>
+<script src="GenresOverTime_files/libs/quarto-html/quarto.js"></script>
+<script src="GenresOverTime_files/libs/quarto-html/popper.min.js"></script>
+<script src="GenresOverTime_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="GenresOverTime_files/libs/quarto-html/anchor.min.js"></script>
+<link href="GenresOverTime_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="GenresOverTime_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="GenresOverTime_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="GenresOverTime_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="GenresOverTime_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Starter Analysis</h1>
+<h1 class="title">Genre Popularity Over Time</h1>
 </div>
 
 
@@ -245,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 `geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="StarterAnalysis_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="GenresOverTime_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -275,7 +275,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
 ✖ recipes::step()   masks stats::step()
-• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+• Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>

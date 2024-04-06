@@ -2,6 +2,6 @@ This folder contains folders which contain various forms of analysis code.
 
 INDEX:
 
-starter-analysis - contains code/files for some starter analysis (figures, basic model fitting)
+genres-over-time - contains code/files for some starter analysis (figures, basic model fitting)
 
-
+audio-features - contains code/files for analysis of audio features using a general additive model
