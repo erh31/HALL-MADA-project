@@ -47,7 +47,7 @@ artist_genre_mapping <- list(
   "The Raiders" = "rock",
   "Johnny Nash" = "pop", "r&b_reggae",
   "The Elton John Band" = "rock", "pop",
-  "Walter Murphy & The Big Apple Band" = "disco", "funk", "jazz_blues",
+  "Walter Murphy & The Big Apple Band" = "electronic_dance", "funk", "jazz_blues",
   "Rick Dees & His Cast Of Idiots" = "r&b_reggae", "soul_funk",
   "Marilyn McCoo & Billy Davis, Jr." = "r&b_reggae", "soul_funk", "pop",
   "Mary Macgregor" = "rock", "country", "classic_folk",
@@ -63,12 +63,14 @@ artist_genre_mapping <- list(
   "Londonbeat" = "electronic_dance",
   "Prince And The N.P.G." = "pop", "rock", "r&b_reggae",
   "Peabo Bryson & Regina Belle" = "pop", "r&b_reggae", "soul_funk",
-  "Lady Gaga Featuring Colby O'Donis" = "dance", "pop",
+  "Lady Gaga Featuring Colby O'Donis" = "electronic_dance", "pop",
   "LMFAO Featuring Lauren Bennett & GoonRock" = "pop", "dance",
   "Wiz Khalifa Featuring Charlie Puth" = "pop", "hip_hop_rap",
   "Rihanna Featuring Drake" = "pop", "hip_hop_rap",
   "Maroon 5 Featuring Cardi B" = "pop", "rock",
-  "The Weeknd & Ariana Grande" = "r&b_reggae", "pop"
+  "The Weeknd & Ariana Grande" = "r&b_reggae", "pop",
+  "Eminem Featuring Rihanna" = "pop", "hip_hop_rap",
+  "Divine" = "r&b_reggae", "soul_funk"
 )
 
 
