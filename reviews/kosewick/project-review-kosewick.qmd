@@ -1,0 +1,175 @@
+---
+title: Project Review Template 
+author: YOUR NAME
+date: date-modified
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+Title of project: Temporal Trends in Popular Music Genres: A Data-Driven Analysis
+
+Name of project author(s): Elizabeth Hall
+
+Name of project reviewer: Kevin Kosewick
+
+## Background, Context and Motivation
+How well is the context of the project described? Is a comprehensive background, including summary of previous/related work given? Is the project well placed into the context of existing work (including proper referencing of existing work). Is it clear why the project was undertaken and what new information it hopes to provide?
+
+### Feedback and Comments
+
+The abstract section is present in "Manuscript2.html" file, but there is no text. I would recommend writing some for the final project deadline. Besides that, the background is neatly organized and the source of the data is clearly presented. There isn't a summary of previous/related work; some references to past work done on audio features or genre popularity would be good to include in the final submission. It is clear why the project was undertaken and what it hopes to find. There's a good summary of the goals and interests of the analysis.
+
+### Summary assessment (PICK ONE, DELETE THE OTHERS)
+
+* some contextualization and motivation
+
+
+## Question description
+How well and clear are the question(s)/hypotheses the project aims to address described? Is it clear how the questions relate to the data?
+
+
+### Feedback and Comments
+
+The questions are clearly marked and related to the data. There's a whole dedicated section for these and the explanations for both are succint and clear.
+
+### Summary assessment
+
+* question/hypotheses fully clear
+
+## Data description
+How well is the data overall described? Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is? 
+
+### Feedback and Comments
+
+The source for the data is provided clearly. There is a brief listing of variables included in the manuscript. There is a detailed codebook included in the "data" folder.
+
+### Summary assessment
+
+* source and overall structure of data well explained
+
+
+## Data wrangling and exploratory analysis
+How well is the data cleaned/processed and explored? Are all steps reasonable and well explained? Are alternatives discussed and considered? Are meaningful exploratory results shown (e.g. in the supplementary materials)?
+
+### Feedback and Comments
+
+The data is very well cleaned and annotated. The exploration process is also neatly documented and explained. There isn't much discussion of alternatives; that could be added to improve this part of the project. There isn't a supplementary materials file, but the meaningful exploratory results are included in the manuscript itself. I think the graphs are visually appealing and provide good information about the data. However, a supplementary folder with exploratory information is pretty standard, so the manuscript would likely be condensed and improved by adding one.
+
+### Summary assessment
+
+* some weaknesses in wrangling and exploratory component
+
+
+## Appropriateness of Analysis
+Were the analysis methods appropriate for the data? Was the analysis done properly? Were different components of the analysis (e.g. performance measure, variable selection, data pre-processing, model evaluation) done in the best way possible and explained well?
+
+### Feedback and Comments
+
+The analysis methods seemed very suitable for the the data. There wasn't much justification or any exploration of alternatives, but the general principles of each model seemed suitable for the situations they were used in. All machine learning models were fit using CV, but none of the other models were. I'm not sure if GAMs or multivariate analyses would benefit from CV/train & test splits, but if they would, it may be a good idea to include those. My lack of knowledge about those two models in particular makes it difficult to evaluate their suitability.
+
+I was unable to reproduce the machine learning script; when I attempted to run the code, it gave an error message at the point of model fitting. I also didn't see much model evaluation in your ML analysis script. Your manuscript shows the observed v predicted plots but it would be nice to quantify the differences. Comparing a metric like RMSE or R^2 would be nice to strengthen your choice in the Random Forest model. 
+
+### Summary assessment
+
+* defensible but not optimal analysis 
+
+
+## Presentation
+How well are results presented? Are tables and figures easy to read and understand? Are the main figures/tables publication level quality? 
+
+### Feedback and Comments
+
+The results are presented very neatly and in an easy-to-follow manner. Your manuscript renders very nicely and walks readers through the process in a very organized manner. I would consider the figures/tables publication quality for sure. My only suggestion would be to center your figure captions under your figures, but that's a small detail and doesn't detract from the high quality manuscript you made.
+
+### Summary assessment
+
+* results are very well presented
+
+
+## Discussion/Conclusions
+Are the study findings properly discussed? Are strengths and limitations acknowledged? Are findings interpreted properly?
+
+### Feedback and Comments
+
+The findings are briefly discussed. The section could be fleshed out by pointing to general trends seen in your results (e.g. music that is faster, louder, and more danceable has seen an uptick in recent years). This is where incorporating references to previous studies would improve your overall ability to draw conclusions from this particular dataset (e.g. this follows the general trend seen in other sets or stands apart for some reason). Strengths and limitations are acknowledged and the findings are interpreted properly.
+
+### Summary assessment
+
+* minor parts wrong, missing or unclear
+
+
+## Further comments
+
+Overall a very neat and well made project. I would reread your manuscript and correct typos; I spotted several throughout that are easily fixable. A bit more model comparison/justification would make the project very difficult to poke holes in.
+
+
+
+# Overall project content evaluation
+Evaluate overall features of the project  by filling in the sections below.
+
+
+## Structure
+Is the project well structured? Are files in well labeled folders? Do files have reasonable names? Are all "junk" files not needed for analysis/reproduction removed? By just looking at files and folders, can you get an idea of how things fit together?
+
+### Feedback and Comments
+
+The repository is very clearly and neatly organized. ReadMe files provide thorough instructions of how to reproduce everything and the scripts/Quarto documents are all well-annotated. Names are reasonable and junk files aren't present. I can clearly follow the format and get an idea of how things fit together.
+
+### Summary assessment
+
+* well structured
+
+
+## Documentation 
+How well is the project documented? Are you able to understand each step of the whole analysis, each decision that was made, and each line of code? Is enough information provided as comments in code or as part of Rmd files? 
+
+### Feedback and Comments
+
+The project is very well-documented. The html version provided for each Quarto document made it easy to follow each process. Each code chunk is clearly labeled and points to specific reasons for taking most steps.
+
+### Summary assessment
+
+* fully and well documented
+
+
+
+## Reproducibility
+Are all results fully reproducible? Is documentation provided which clearly explains how to reproduce things, and does it work without the need for any manual intervention? Are you able to re-run the whole analysis without having to do manual interventions/edits?
+
+### Feedback and Comments
+
+Documentation is provided to clearly explain how to reproduce things; however, the nature of the SpotifyAPI requires manual intervention for the data processing steps. This is unavoidable given the data. I was unable to reproduce the machine learning models script. I received an error message at the model fitting steps despite installing each package required before running the script. I'm unsure why, but I know the model fitting parts in particular can be quite finnicky. I would double check that you can reproduce the machine learning script yourself.
+
+
+### Summary assessment
+
+* small parts not reproducible or required manual intervention 
+
+
+
+## Thoroughness
+How thorough was the overall study? Were alternatives (e.g. different ways of processing the data or different models) considered? Were alternatives discussed? Were the questions/hypotheses fully and thoroughly addressed?
+
+### Feedback and Comments
+
+The questions and hypotheses were fully and thoroughly explored. The project could be improved by discussing different models that could be used and justifiyng your reasoning behind selecting each model that you used. 
+
+### Summary assessment
+
+* decent level of thoroughness
+
+
+
+## Further comments
+
+A really good and interesting analysis. However, I do wonder why reggae and R&B are lumped together as I see those as two very distinct genres with different origins and histories. Other than that, I enjoyed reading your results and seeing the interesting variables that determine the popularity of music over the decades. Great job; everything I commented on should be easily fixable and result in a very strong project.
+
+
+
+
+
