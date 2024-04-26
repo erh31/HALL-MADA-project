@@ -8,7 +8,7 @@ library(dplyr)
 library(here)
 
 # Load data
-data <- read.csv(here("data", "processed-data", "Hot_100.csv"))
+data <- read.csv(here("data", "processed-data", "Hot_100_Processed.csv"))
 
 # Summary statistics
 summary_stats <- summary(hot100_processed)
@@ -33,14 +33,14 @@ ggplot(genre_counts_df, aes(x = reorder(genre, -count), y = count)) +
 # Prepare the data: Calculate the percentage of instances per year for each main genre
 hot100_percentage <- hot100_processed %>%
   separate_rows(main_genres, sep = ",") %>%
-  group_by(year.x, main_genres) %>%
+  group_by(year, main_genres) %>%
   summarise(n = n(), .groups = 'drop') %>%
   mutate(total = sum(n), percentage = n / total * 100) %>%
   select(-n, -total) %>%
   spread(key = main_genres, value = percentage, fill = 0) # Convert genres to wide format for area plot
 
 # Assuming hot100_percentage is already in the correct format with columns for each genre and year
-ggplot(hot100_percentage, aes(x = year.x)) +
+ggplot(hot100_percentage, aes(x = year)) +
   geom_area(aes(y = classic_folk, fill = 'Classic/Folk')) +
   geom_area(aes(y = country, fill = 'Country')) +
   geom_area(aes(y = electronic_dance, fill = 'Electronic/Dance')) +
