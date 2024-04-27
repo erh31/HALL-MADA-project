@@ -1,0 +1,210 @@
+---
+title: Project Review 
+author: Kelly Cao
+date: 04/26/2024
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+Title of project: Temporal Trends in Popular Music Genres: A Data-Driven Analysis
+
+Name of project author(s): Elizabeth Hall
+
+Name of project reviewer: Kelly Cao
+
+
+## Background, Context and Motivation
+How well is the context of the project described? Is a comprehensive background, including summary of previous/related work given? Is the project well placed into the context of existing work (including proper referencing of existing work). Is it clear why the project was undertaken and what new information it hopes to provide?
+
+### Feedback and Comments
+
+The background behind the data is pretty clear and additional information is well referenced. I think you should include an abstract or summary for all your findings, and it would be interesting to have additional references to previous studies or work on this. 
+
+The purpose of the project and the intended information to come out of this study is displayed farily clearly. 
+
+### Summary assessment (PICK ONE, DELETE THE OTHERS)
+* strong contextualization and motivation
+
+
+## Question description
+How well and clear are the question(s)/hypotheses the project aims to address described? Is it clear how the questions relate to the data?
+
+
+### Feedback and Comments
+
+The question/hypotheses were addressed very clearly. It is clear how the data will tie in to them. 
+
+### Summary assessment
+* question/hypotheses fully clear
+
+
+## Data description
+How well is the data overall described? Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is? 
+
+### Feedback and Comments
+
+The data set was described pretty clearly. The source of the data set is the referenced github repository and the APIs provided by spotify. A codebook could be found in the repository. 
+
+I think it wouldn't hurt to put more descriptive information about the raw data to provide more clarity to the readers.
+
+### Summary assessment
+* source and overall structure of data well explained
+
+
+## Data wrangling and exploratory analysis
+How well is the data cleaned/processed and explored? Are all steps reasonable and well explained? Are alternatives discussed and considered? Are meaningful exploratory results shown (e.g. in the supplementary materials)?
+
+### Feedback and Comments
+
+The data cleaning processed was described extremely well in the manuscript. The markdown file containing the processing was well documented and easy to follow. There are no discussion involved in alternative options, but I believe the choices made are sufficient for the task at hand. 
+
+The exploratory process was short and succinct. I particularly enjoyed the plot showcasing the genre percentage over time. The images are all visually appealing and provides further insight into the data. I think more exploration can be performed, as the limited analysis can be a bit weak.
+
+There was some issues with reproducibility that I will mention below. 
+### Summary assessment
+* some weaknesses in wrangling and exploratory component
+
+
+
+## Appropriateness of Analysis
+Were the analysis methods appropriate for the data? Was the analysis done properly? Were different components of the analysis (e.g. performance measure, variable selection, data pre-processing, model evaluation) done in the best way possible and explained well?
+
+### Feedback and Comments
+The analysis methods appeared to be well-suited for the dataset. The overall purpose of each model seemed appropriate for the respective scenarios in which they were employed.
+
+I think you would benefit in doing some cross-validation studies and some model assessment analysis. 
+
+I also had some difficulty with reproducibility that I will explain below.
+
+### Summary assessment
+* defensible but not optimal analysis 
+
+## Presentation
+How well are results presented? Are tables and figures easy to read and understand? Are the main figures/tables publication level quality? 
+
+### Feedback and Comments
+
+The tables and figure were easy to read and understand. I would say they are publication level quality.
+
+### Summary assessment
+* results are very well presented
+
+
+## Discussion/Conclusions
+Are the study findings properly discussed? Are strengths and limitations acknowledged? Are findings interpreted properly?
+
+### Feedback and Comments
+
+The study's finding are clearly summarized in the manuscript, and the visuals that are paired with it are done extremely well. 
+
+It seems the strengths and limitations are acknowledged and the findings are interpreted properly.
+
+### Summary assessment
+* strong, complete and clear discussion
+
+
+## Further comments
+Overall, this project demonstrates considerable strength. I recommend transitioning your manuscript format from HTML to a document format to better align with the intended presentation. The current file appears as a webpage, but it should exhibit the structured layout characteristic of a manuscript.
+
+## Structure
+Is the project well structured? Are files in well labeled folders? Do files have reasonable names? Are all "junk" files not needed for analysis/reproduction removed? By just looking at files and folders, can you get an idea of how things fit together?
+
+### Feedback and Comments
+The project is very neat and well structured! The files are found in correctly labeled folders. I would recommend updating some README that appear out of date, particularly the one found in your data directory. 
+
+I also noticed that your README files have varying extensions. Some are .txt files, and some are .md files. I would recommend changing it so there's more cohesion with the presentation of the repository. 
+
+### Summary assessment
+* well structured
+
+
+## Documentation 
+How well is the project documented? Are you able to understand each step of the whole analysis, each decision that was made, and each line of code? Is enough information provided as comments in code or as part of Rmd files? 
+
+### Feedback and Comments
+
+The project is well documented. Each step of the whole analysis and every decision was easy to follow. Enough information was provided in the comments of the code and markdown files. 
+
+### Summary assessment
+* fully and well documented
+
+
+
+## Reproducibility
+Are all results fully reproducible? Is documentation provided which clearly explains how to reproduce things, and does it work without the need for any manual intervention? Are you able to re-run the whole analysis without having to do manual interventions/edits?
+
+### Feedback and Comments
+There were a few files I had difficulty reproducing. The documentation provided on how to run each file was fairly clear. 
+
+The following line was provided when attempting to render the eda.qmd file. When attempting to search for the file in question, I could not find the .csv with that exact name. I beleive you were either attempting to pull the incorrect file name or it was the .csv file found in the raw-data directory instead. 
+```
+processing file: eda.qmd
+  |...................                                 |  36% [unnamed-chunk-2]
+Quitting from lines 25-27 [unnamed-chunk-2] (eda.qmd)
+Error in `file()`:
+! cannot open the connection
+Backtrace:
+ 1. utils::read.csv("../../data/processed-data/Hot_100.csv")
+ 2. utils::read.table(...)
+ 3. base::file(file, "rt")
+                                                                                                            
+Execution halted
+```
+The following error came from the DataExploration.R script. I believe that was a simple typo. This appears twice in your script. 
+```
+> hot100_percentage <- hot100_processed %>%
++   separate_rows .... [TRUNCATED] 
+Error in `group_by()`:
+! Must group by variables found in `.data`.
+✖ Column `year.x` is not found.
+```
+The following error came when I attempted to run the ML.R script. 
+```
+df_balanced_rec <- recipe(genre ~ danceability + energy + loudness + speechiness + acousticness + instrumentalness + liveness + valence + tempo, 
++           data = df_select) %>%
++   step_impute_mean(all_predictors()) %>%
++   step_smote(genre, over_ratio = 0.30) %>%
++   prep()
+Error in `step_smote()`:
+Caused by error in `prep()`:
+! Cannot have any missing values. NAs found ind: genre.
+Run `rlang::last_trace()` to see where the error occurred.
+```
+
+
+The `write.csv()` (on line 29) function on GenreOverTime.R script produced:
+```
+Error in file(file, ifelse(append, "a", "w")) : 
+  cannot open the connection
+```
+It appears this error was corrected in the markdown version, but I would suggest fixing it. 
+
+Your GAM.R script ran perfectly. 
+
+### Summary assessment
+* major parts not reproducible 
+
+
+## Thoroughness
+How thorough was the overall study? Were alternatives (e.g. different ways of processing the data or different models) considered? Were alternatives discussed? Were the questions/hypotheses fully and thoroughly addressed?
+
+### Feedback and Comments
+
+The study was performed well. I think you can strengthen your study with some more alternative options and more detailed shown in your discussion. I think the study can be strengthen with more model studies and provide with more assessment on model robustness. 
+
+### Summary assessment
+* decent level of thoroughness
+
+
+
+## Further comments
+Overall, this was a great project. You have a few errors that can be easily fixed, but otherwise, it's a phenomenol project. This was super fun to read about and your plots and tables were definitely one of your strongest asset. Visually stunning! 
+
+
+
+
