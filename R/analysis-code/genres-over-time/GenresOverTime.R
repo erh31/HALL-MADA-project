@@ -26,7 +26,7 @@ binary_genres <- data %>%
     Genre_IndieAlt = ifelse(str_detect(main_genres, "indie_alt"), 1, 0)
   )
 
-write.csv(binary_genres, here("data", "processed-data", "Intermediate", "Hot100s_BinaryGenres.csv"), row.names = FALSE)
+write.csv(binary_genres, here("data", "processed-data", "Intermediates", "Hot100s_BinaryGenres.csv"), row.names = FALSE)
 
 
 # Assuming 'data' is your dataset with binary flags for genres and 'year' is the year column

@@ -6,4 +6,7 @@ genres-over-time - contains code/files for some starter analysis (figures, basic
 
 audio-features - contains code/files for analysis of audio features using a general additive model
 
-ML.R - contains code for analysis using regression ml models
+machine-learning - contains code/files for analysis of year predicted by audio features using several ml models
+
+
+Run in any order after processing code.

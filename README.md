@@ -17,6 +17,8 @@ products - contains all products produced by project
 
 R - contains all code used in the project
 
+reviews - contain reviews of project from classmates
+
 --- 
 
 # The Process
@@ -29,10 +31,11 @@ R - contains all code used in the project
 	- see readme.md in processing-code (R/processing-code)
 	- follow processes as laid out in the quarto file
 
+
 - Analysis
 
 	- see readme.md in analysis-code (R/analysis-code) and eda-code (R/eda-code)
-	- follow the processes as laid out in the quarto file
+	- follow the processes as laid out in the quarto files/readme's
 
 ---
 

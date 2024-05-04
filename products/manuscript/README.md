@@ -6,10 +6,10 @@ INDEX:
 
 images - contains images used in manuscript
 
-Manuscript_files - contains files related to the manuscript
+Manuscript2_files - contains files related to the manuscript
 
-Manuscript.docx - contains .docx rendered version of manuscript
+Manuscript2.docx - contains .docx rendered version of manuscript
 
-Manuscript.qmd - contains quarto code for generating manuscript
+Manuscript2.qmd - contains quarto code for generating manuscript
 
 

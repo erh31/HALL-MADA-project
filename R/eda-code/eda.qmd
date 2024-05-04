@@ -8,6 +8,8 @@ output: html_document
 
 This file contains the code for some simple exploration of the cleaned data.
 
+This is based off of the code present in `DataExploration.R` which is in the same folder. 
+
 # Summary Stats and Graphs
 
 Load needed packages, and make sure they are installed.
@@ -17,13 +19,14 @@ Load needed packages, and make sure they are installed.
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
+library(here)
 ```
 
 ### Data loading
 
 ```{r}
 # Load data
-hot100_processed <- read.csv("../../data/processed-data/Hot_100.csv")
+hot100_processed <- read.csv("../../data/processed-data/Hot_100s_Processed.csv")
 ```
 
 Summary statistics for dataset.
@@ -60,14 +63,14 @@ Stacked area chart showing the percentage of main genres over time.
 # Prepare the data: Calculate the percentage of instances per year for each main genre
 hot100_percentage <- hot100_processed %>%
   separate_rows(main_genres, sep = ",") %>%
-  group_by(year.x, main_genres) %>%
+  group_by(year, main_genres) %>%
   summarise(n = n(), .groups = 'drop') %>%
   mutate(total = sum(n), percentage = n / total * 100) %>%
   select(-n, -total) %>%
   spread(key = main_genres, value = percentage, fill = 0) # Convert genres to wide format for area plot
 
 # Assuming hot100_percentage is already in the correct format with columns for each genre and year
-ggplot(hot100_percentage, aes(x = year.x)) +
+ggplot(hot100_percentage, aes(x = year)) +
   geom_area(aes(y = classic_folk, fill = 'Classic/Folk')) +
   geom_area(aes(y = country, fill = 'Country')) +
   geom_area(aes(y = electronic_dance, fill = 'Electronic/Dance')) +

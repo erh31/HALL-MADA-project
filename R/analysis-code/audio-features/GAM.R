@@ -1,6 +1,7 @@
 # Load libraries
 library(mgcv)
 library(here)
+library(caret)
 library(dplyr)
 library(tidyr)
 library(patchwork)
@@ -8,6 +9,10 @@ library(ggplot2)
 
 # Load the dataset
 df <- read.csv(here("data", "processed-data", "Hot_100_Processed.csv"))
+
+# Set RNG value for reproducibility
+rngseed <- 42
+set.seed(rngseed)
 
 # Assuming 'df' is your original dataframe and 'main_genres' is the genre variable
 df <- df %>%
@@ -32,26 +37,70 @@ df <- df %>%
 audio_features <- c("danceability", "energy", "loudness", "speechiness",
                     "acousticness", "instrumentalness", "liveness", "valence", "tempo")
 
-# Initialize an empty list to store GAM models
-gam_fits <- list()
+# Define different degrees of freedom to test for the spline on 'year'
+degrees_of_freedom <- c(4, 6, 8, 10)
 
-# Fit a GAM for each feature
+# Initialize a list to store the best GAM model for each feature
+best_gam_models <- list()
+model_performance <- list()
+
+# Perform cross-validation for each feature
 for (feature in audio_features) {
-  formula <- as.formula(paste(feature, "~ s(year) + pop + rock + country + jazz_blues + soul_funk +
-                                 hip_hop_rap + electronic_dance + rnb_reggae + classic_folk + 
-                                 world_regional + indie_alt"))
+  # Create 5-fold cross-validation indices
+  folds <- createFolds(df$year, k = 5, returnTrain = TRUE)
+  set.seed(rngseed)  # for reproducibility
+  feature_rmses <- list()
   
-  gam_fit <- gam(formula, data = df)
+  # Test each degrees of freedom for the spline
+  for (deg_free in degrees_of_freedom) {
+    rmses <- vector("numeric", length(folds))
+    
+    for (i in seq_along(folds)) {
+      # Ensure correct subsetting for training and testing
+      train_indices <- folds[[i]]
+      test_indices <- setdiff(1:nrow(df), train_indices)
+      
+      train_data <- df[train_indices, , drop = FALSE]
+      test_data <- df[test_indices, , drop = FALSE]
+      
+      # Fit the GAM model on the training data with specified degrees of freedom
+      formula <- as.formula(paste(feature, "~ s(year, k =", deg_free, ") + pop + rock + country + jazz_blues + soul_funk +
+                               hip_hop_rap + electronic_dance + rnb_reggae + classic_folk + 
+                               world_regional + indie_alt"))
+      gam_fit <- gam(formula, data = train_data, method = "REML")
+      
+      # Predict on the testing data
+      predictions <- predict(gam_fit, newdata = test_data)
+      
+      # Calculate and store RMSE for this fold
+      rmses[i] <- sqrt(mean((predictions - test_data[[feature]])^2))
+    }
+    
+    # Store average RMSE for this degrees of freedom
+    feature_rmses[[as.character(deg_free)]] <- mean(rmses)
+  }
   
-  # Store the fitted model
-  gam_fits[[feature]] <- gam_fit
+  # Identify the best degrees of freedom
+  best_deg_free <- as.numeric(names(which.min(unlist(feature_rmses))))
+  
+  # Fit the best model to the entire dataset
+  best_formula <- as.formula(paste(feature, "~ s(year, k =", best_deg_free, ") + pop + rock + country + jazz_blues + soul_funk +
+                                    hip_hop_rap + electronic_dance + rnb_reggae + classic_folk + 
+                                    world_regional + indie_alt"))
+  best_gam_models[[feature]] <- gam(best_formula, data = df, method = "REML")
+  
+  # Store the best model's RMSE
+  model_performance[[feature]] <- min(unlist(feature_rmses))
 }
+
+# Print the model performance
+print(model_performance)
 
 # Generate a rainbow color palette for each audio feature
 feature_colors <- setNames(rainbow(length(audio_features)), audio_features)
 
 # Create plots for each audio feature, with customized CI colors
-plot_list <- lapply(names(gam_fits), function(feature) {
+plot_list <- lapply(names(best_gam_models), function(feature) {
   plot_data <- data.frame(year = df$year, feature_value = df[[feature]])
   min_year <- min(plot_data$year)
   max_year <- max(plot_data$year)
